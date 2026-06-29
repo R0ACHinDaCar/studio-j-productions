@@ -1,37 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 // ---------------------------------------------------------------------------
 // Hero.tsx — Studio J Productions
-//
-// Structure:
-//   • Fullscreen video background (hero.mp4 from /public)
-//   • Layered overlays: dark base + subtle warm vignette
-//   • Animated headline, subheadline, CTA, scroll indicator
-//   • No Framer Motion dependency — pure CSS + lightweight JS
-//     (swap to Framer Motion later with zero structural changes)
+// Updated: Framer Motion animations, white logo, eyebrow removed
 // ---------------------------------------------------------------------------
+
+// Shared easing used across all entrance animations
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+// Each content element staggers in from below
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.9, ease: EASE, delay },
+});
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
 
-  // Fade in content shortly after video is ready
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const handleCanPlay = () => {
-      setLoaded(true);
-      // Small delay so the first frame has painted before we animate
-      setTimeout(() => setVisible(true), 100);
+      setVideoLoaded(true);
+      setTimeout(() => setContentReady(true), 200);
     };
 
     video.addEventListener("canplay", handleCanPlay);
-
-    // If video is already cached and ready
     if (video.readyState >= 3) handleCanPlay();
 
     return () => video.removeEventListener("canplay", handleCanPlay);
@@ -39,100 +41,103 @@ export default function Hero() {
 
   return (
     <section style={styles.section}>
-      {/* ── Video background ─────────────────────────────────── */}
-      <video
+
+      {/* ── Video ──────────────────────────────────────────────── */}
+      <motion.video
         ref={videoRef}
         src="/hero.mp4"
         autoPlay
         muted
         loop
         playsInline
-        style={{
-          ...styles.video,
-          opacity: loaded ? 1 : 0,
-        }}
+        style={styles.video}
+        animate={{ opacity: videoLoaded ? 1 : 0 }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
       />
 
-      {/* ── Overlays ─────────────────────────────────────────── */}
-      {/* Base dark layer */}
+      {/* ── Overlays ───────────────────────────────────────────── */}
       <div style={styles.overlayDark} />
-      {/* Warm cream vignette — pulls the palette toward #F8F6F2 */}
       <div style={styles.overlayVignette} />
 
-      {/* ── Content ──────────────────────────────────────────── */}
-      <div style={styles.content}>
-        {/* Eyebrow label */}
-        <p
-          style={{
-            ...styles.eyebrow,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(12px)",
-          }}
-        >
-          Cinematic Media Production
-        </p>
+      {/* ── Logo — top center, fades in first ──────────────────── */}
+      <AnimatePresence>
+        {contentReady && (
+          <motion.div
+            style={styles.logoWrapper}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, ease: EASE, delay: 0.1 }}
+          >
+            <Image
+              src="/logo-white.png"
+              alt="Studio J Productions"
+              width={160}
+              height={60}
+              style={styles.logo}
+              priority
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Headline — split so each word can be styled independently later */}
-        <h1
-          style={{
-            ...styles.headline,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
-            transitionDelay: "0.15s",
-          }}
-        >
-          Your Story.
-          <br />
-          <span style={styles.headlineItalic}>Elevated.</span>
-        </h1>
+      {/* ── Main content ───────────────────────────────────────── */}
+      <div style={styles.content}>
+
+        {/* Headline */}
+        <AnimatePresence>
+          {contentReady && (
+            <motion.h1 style={styles.headline} {...fadeUp(0.2)}>
+              Your Story.
+              <br />
+              <span style={styles.headlineItalic}>Elevated.</span>
+            </motion.h1>
+          )}
+        </AnimatePresence>
 
         {/* Subheadline */}
-        <p
-          style={{
-            ...styles.subheadline,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(16px)",
-            transitionDelay: "0.3s",
-          }}
-        >
-          Premium cinematic films for businesses, brands,
-          <br />
-          creators, and unforgettable moments.
-        </p>
+        <AnimatePresence>
+          {contentReady && (
+            <motion.p style={styles.subheadline} {...fadeUp(0.38)}>
+              Premium cinematic films for businesses, brands,
+              <br />
+              creators, and unforgettable moments.
+            </motion.p>
+          )}
+        </AnimatePresence>
 
         {/* CTA */}
-        <div
-          style={{
-            ...styles.ctaWrapper,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(16px)",
-            transitionDelay: "0.45s",
-          }}
-        >
-          <HeroButton href="/booking">Start Your Project</HeroButton>
-        </div>
+        <AnimatePresence>
+          {contentReady && (
+            <motion.div {...fadeUp(0.54)}>
+              <HeroButton href="/booking">Start Your Project</HeroButton>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* ── Scroll indicator ─────────────────────────────────── */}
-      <div
-        style={{
-          ...styles.scrollIndicator,
-          opacity: visible ? 1 : 0,
-          transitionDelay: "0.9s",
-        }}
-      >
-        <span style={styles.scrollLabel}>Scroll</span>
-        <div style={styles.scrollLine}>
-          <div style={styles.scrollLineFill} />
-        </div>
-      </div>
+      {/* ── Scroll indicator ───────────────────────────────────── */}
+      <AnimatePresence>
+        {contentReady && (
+          <motion.div
+            style={styles.scrollIndicator}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 1.1 }}
+          >
+            <span style={styles.scrollLabel}>Scroll</span>
+            <div style={styles.scrollLine}>
+              <div style={styles.scrollLineFill} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </section>
   );
 }
 
 // ---------------------------------------------------------------------------
-// HeroButton — inline so this file is self-contained.
-// Replace with your shared Button.tsx import once that's wired up.
+// HeroButton
 // ---------------------------------------------------------------------------
 
 function HeroButton({
@@ -142,42 +147,36 @@ function HeroButton({
   href: string;
   children: React.ReactNode;
 }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
-    <a
+    <motion.a
       href={href}
-      style={{
-        ...styles.button,
-        backgroundColor: hovered ? "#F8F6F2" : "transparent",
-        color: hovered ? "#111111" : "#F8F6F2",
+      style={styles.button}
+      whileHover={{
+        backgroundColor: "#F8F6F2",
+        color: "#111111",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      transition={{ duration: 0.25, ease: "easeOut" }}
     >
       {children}
-    </a>
+    </motion.a>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Styles — plain object approach keeps this zero-dependency.
-// All transitions live here so they're easy to find and swap to Framer Motion.
+// Styles
 // ---------------------------------------------------------------------------
-
-const TRANSITION = "opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
 
 const styles: Record<string, React.CSSProperties> = {
   section: {
     position: "relative",
     width: "100%",
-    height: "100dvh",          // dynamic viewport height — handles mobile chrome bars
+    height: "100dvh",
     minHeight: "600px",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0a0a0a", // shows while video loads
+    backgroundColor: "#0a0a0a",
   },
 
   video: {
@@ -187,10 +186,8 @@ const styles: Record<string, React.CSSProperties> = {
     height: "100%",
     objectFit: "cover",
     objectPosition: "center",
-    transition: "opacity 1.2s ease",
   },
 
-  // Darkens the video enough to read text cleanly
   overlayDark: {
     position: "absolute",
     inset: 0,
@@ -198,14 +195,26 @@ const styles: Record<string, React.CSSProperties> = {
     zIndex: 1,
   },
 
-  // Warm vignette — heavier at edges, transparent in centre
-  // This ties the dark hero to the cream palette elsewhere on the page
   overlayVignette: {
     position: "absolute",
     inset: 0,
     background:
-      "radial-gradient(ellipse at center, transparent 30%, rgba(14, 10, 6, 0.55) 100%)",
+      "radial-gradient(ellipse at center, transparent 30%, rgba(14, 10, 6, 0.6) 100%)",
     zIndex: 2,
+  },
+
+  // Logo sits at the top of the hero, centered, above the headline
+  logoWrapper: {
+    position: "absolute",
+    top: "44px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 20,
+  },
+
+  logo: {
+    objectFit: "contain",
+    display: "block",
   },
 
   content: {
@@ -216,30 +225,16 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: "860px",
   },
 
-  eyebrow: {
-    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-    fontSize: "clamp(10px, 1.2vw, 13px)",
-    fontWeight: 500,
-    letterSpacing: "0.2em",
-    textTransform: "uppercase" as const,
-    color: "rgba(248, 246, 242, 0.55)",
-    marginBottom: "28px",
-    transition: TRANSITION,
-  },
-
   headline: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
     fontSize: "clamp(52px, 8vw, 112px)",
-    fontWeight: 400,             // let the serif do the work — no bold needed
+    fontWeight: 400,
     lineHeight: 1.05,
     letterSpacing: "-0.02em",
     color: "#F8F6F2",
     margin: "0 0 28px",
-    transition: TRANSITION,
   },
 
-  // "Elevated." in italic — the one typographic risk
-  // Italic serif on a dark cinematic frame feels editorial, not decorative
   headlineItalic: {
     fontStyle: "italic",
     color: "rgba(248, 246, 242, 0.85)",
@@ -252,25 +247,21 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1.7,
     color: "rgba(248, 246, 242, 0.65)",
     margin: "0 0 48px",
-    transition: TRANSITION,
-  },
-
-  ctaWrapper: {
-    transition: TRANSITION,
   },
 
   button: {
     display: "inline-block",
     padding: "16px 40px",
     border: "1px solid rgba(248, 246, 242, 0.6)",
-    borderRadius: "2px",         // almost sharp — not pill, not square. intentional.
+    borderRadius: "2px",
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     fontWeight: 500,
     letterSpacing: "0.12em",
     textTransform: "uppercase" as const,
     textDecoration: "none",
-    transition: "background-color 0.3s ease, color 0.3s ease",
+    color: "#F8F6F2",
+    backgroundColor: "transparent",
     cursor: "pointer",
   },
 
@@ -284,7 +275,6 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: "column" as const,
     alignItems: "center",
     gap: "10px",
-    transition: "opacity 0.8s ease 0.9s",
   },
 
   scrollLabel: {
@@ -303,7 +293,6 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
   },
 
-  // The fill animates downward via CSS keyframes injected in globals.css
   scrollLineFill: {
     width: "100%",
     height: "100%",
