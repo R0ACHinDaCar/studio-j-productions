@@ -1,136 +1,107 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 // ---------------------------------------------------------------------------
 // Hero.tsx — Studio J Productions
-// Updated: Framer Motion animations, white logo, eyebrow removed
 // ---------------------------------------------------------------------------
 
-// Shared easing used across all entrance animations
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-// Each content element staggers in from below
-const fadeUp = (delay: number) => ({
-  initial: { opacity: 0, y: 28 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.9, ease: EASE, delay },
-});
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [contentReady, setContentReady] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    const handleCanPlay = () => {
-      setVideoLoaded(true);
-      setTimeout(() => setContentReady(true), 200);
-    };
-
-    video.addEventListener("canplay", handleCanPlay);
-    if (video.readyState >= 3) handleCanPlay();
-
-    return () => video.removeEventListener("canplay", handleCanPlay);
+    const handle = () => setTimeout(() => setReady(true), 150);
+    video.addEventListener("canplay", handle);
+    if (video.readyState >= 3) handle();
+    return () => video.removeEventListener("canplay", handle);
   }, []);
+
+  // Reusable fade-up variant factory
+  const fadeUp = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+    transition: { duration: 0.85, ease: EASE, delay },
+  });
 
   return (
     <section style={styles.section}>
 
-      {/* ── Video ──────────────────────────────────────────────── */}
-      <motion.video
+      {/* ── Video ────────────────────────────────────────────── */}
+      <video
         ref={videoRef}
         src="/hero.mp4"
         autoPlay
         muted
         loop
         playsInline
-        style={styles.video}
-        animate={{ opacity: videoLoaded ? 1 : 0 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
+        style={{
+          ...styles.video,
+          opacity: ready ? 1 : 0,
+          transition: "opacity 1.4s ease",
+        }}
       />
 
-      {/* ── Overlays ───────────────────────────────────────────── */}
+      {/* ── Overlays ─────────────────────────────────────────── */}
       <div style={styles.overlayDark} />
       <div style={styles.overlayVignette} />
 
-      {/* ── Logo — top center, fades in first ──────────────────── */}
-      <AnimatePresence>
-        {contentReady && (
-          <motion.div
-            style={styles.logoWrapper}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, ease: EASE, delay: 0.1 }}
-          >
-            <Image
-              src="/logo-white.png"
-              alt="Studio J Productions"
-              width={160}
-              height={60}
-              style={styles.logo}
-              priority
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Logo ─────────────────────────────────────────────── */}
+      <motion.div
+        style={styles.logoWrapper}
+        initial={{ opacity: 0 }}
+        animate={ready ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.0, ease: EASE, delay: 0.1 }}
+      >
+        <Image
+          src="/logo-white.png"
+          alt="Studio J Productions"
+          width={120}
+          height={48}
+          style={styles.logo}
+          priority
+        />
+      </motion.div>
 
-      {/* ── Main content ───────────────────────────────────────── */}
+      {/* ── Content ──────────────────────────────────────────── */}
       <div style={styles.content}>
 
-        {/* Headline */}
-        <AnimatePresence>
-          {contentReady && (
-            <motion.h1 style={styles.headline} {...fadeUp(0.2)}>
-              Your Story.
-              <br />
-              <span style={styles.headlineItalic}>Elevated.</span>
-            </motion.h1>
-          )}
-        </AnimatePresence>
+        <motion.h1 style={styles.headline} {...fadeUp(0.25)}>
+          Your Story.
+          <br />
+          <span style={styles.headlineItalic}>Elevated.</span>
+        </motion.h1>
 
-        {/* Subheadline */}
-        <AnimatePresence>
-          {contentReady && (
-            <motion.p style={styles.subheadline} {...fadeUp(0.38)}>
-              Premium cinematic films for businesses, brands,
-              <br />
-              creators, and unforgettable moments.
-            </motion.p>
-          )}
-        </AnimatePresence>
+        <motion.p style={styles.subheadline} {...fadeUp(0.42)}>
+          Premium cinematic films for businesses, brands,
+          <br />
+          creators, and unforgettable moments.
+        </motion.p>
 
-        {/* CTA */}
-        <AnimatePresence>
-          {contentReady && (
-            <motion.div {...fadeUp(0.54)}>
-              <HeroButton href="/booking">Start Your Project</HeroButton>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div {...fadeUp(0.58)}>
+          <HeroButton href="/booking">Start Your Project</HeroButton>
+        </motion.div>
+
       </div>
 
-      {/* ── Scroll indicator ───────────────────────────────────── */}
-      <AnimatePresence>
-        {contentReady && (
-          <motion.div
-            style={styles.scrollIndicator}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 1.1 }}
-          >
-            <span style={styles.scrollLabel}>Scroll</span>
-            <div style={styles.scrollLine}>
-              <div style={styles.scrollLineFill} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Scroll indicator ─────────────────────────────────── */}
+      <motion.div
+        style={styles.scrollIndicator}
+        initial={{ opacity: 0 }}
+        animate={ready ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 1.2 }}
+      >
+        <span style={styles.scrollLabel}>Scroll</span>
+        <div style={styles.scrollLine}>
+          <div style={styles.scrollLineFill} />
+        </div>
+      </motion.div>
 
     </section>
   );
@@ -140,22 +111,13 @@ export default function Hero() {
 // HeroButton
 // ---------------------------------------------------------------------------
 
-function HeroButton({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
+function HeroButton({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <motion.a
       href={href}
       style={styles.button}
-      whileHover={{
-        backgroundColor: "#F8F6F2",
-        color: "#111111",
-      }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      whileHover={{ backgroundColor: "#F8F6F2", color: "#111111" }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
     >
       {children}
     </motion.a>
@@ -198,15 +160,13 @@ const styles: Record<string, React.CSSProperties> = {
   overlayVignette: {
     position: "absolute",
     inset: 0,
-    background:
-      "radial-gradient(ellipse at center, transparent 30%, rgba(14, 10, 6, 0.6) 100%)",
+    background: "radial-gradient(ellipse at center, transparent 30%, rgba(14, 10, 6, 0.6) 100%)",
     zIndex: 2,
   },
 
-  // Logo sits at the top of the hero, centered, above the headline
   logoWrapper: {
     position: "absolute",
-    top: "44px",
+    top: "40px",
     left: "50%",
     transform: "translateX(-50%)",
     zIndex: 20,
@@ -215,6 +175,8 @@ const styles: Record<string, React.CSSProperties> = {
   logo: {
     objectFit: "contain",
     display: "block",
+    // Drop any baked-in shadow/border from the PNG by keeping it small and clean
+    filter: "drop-shadow(0 0 0 transparent)",
   },
 
   content: {
@@ -223,6 +185,8 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "center",
     padding: "0 24px",
     maxWidth: "860px",
+    // Push content down slightly so it doesn't crowd the logo
+    marginTop: "80px",
   },
 
   headline: {
