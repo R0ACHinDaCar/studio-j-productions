@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,7 @@ const MotionLink = motion.create(Link);
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -20,23 +22,35 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
+  const isHomepage = pathname === "/";
+  const isDark = isHomepage ? scrolled : true;
+
   return (
     <motion.nav
       style={{
         ...styles.nav,
-        backgroundColor: scrolled ? "rgba(10, 10, 10, 0.7)" : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-        boxShadow: scrolled ? "0 1px 0 rgba(255,255,255,0.06)" : "none",
+        backgroundColor: isHomepage
+          ? scrolled
+            ? "rgba(10, 10, 10, 0.7)"
+            : "transparent"
+          : "rgba(248, 246, 242, 0.85)",
+        backdropFilter: isHomepage && !scrolled ? "none" : "blur(12px)",
+        WebkitBackdropFilter: isHomepage && !scrolled ? "none" : "blur(12px)",
+        boxShadow: !isHomepage
+          ? "0 1px 0 rgba(17,17,17,0.08)"
+          : scrolled
+          ? "0 1px 0 rgba(255,255,255,0.06)"
+          : "none",
       }}
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
     >
-      {/* Logo */}
+      {/* Logo — swaps based on background */}
       <Link href="/" style={styles.navLogo}>
         <Image
-          src="/logo-white.png"
+          src={isDark ? "/logo-black.png" : "/logo-white.png"}
           alt="Studio J Productions"
           width={84}
           height={34}
@@ -54,7 +68,7 @@ export default function Navbar() {
           { label: "Book", href: "/book" },
           { label: "Portal", href: "/portal" },
         ].map((link) => (
-          <NavLink key={link.label} href={link.href}>
+          <NavLink key={link.label} href={link.href} dark={isDark}>
             {link.label}
           </NavLink>
         ))}
@@ -67,12 +81,23 @@ export default function Navbar() {
 // NavLink
 // ---------------------------------------------------------------------------
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({
+  href,
+  children,
+  dark,
+}: {
+  href: string;
+  children: React.ReactNode;
+  dark: boolean;
+}) {
   return (
     <MotionLink
       href={href}
-      style={styles.navLink}
-      whileHover={{ color: "#F8F6F2" }}
+      style={{
+        ...styles.navLink,
+        color: dark ? "rgba(17, 17, 17, 0.6)" : "rgba(248, 246, 242, 0.55)",
+      }}
+      whileHover={{ color: dark ? "#111111" : "#F8F6F2" }}
       transition={{ duration: 0.2 }}
     >
       {children}
@@ -114,7 +139,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "13px",
     fontWeight: 400,
     letterSpacing: "0.08em",
-    color: "rgba(248, 246, 242, 0.55)",
     textDecoration: "none",
     cursor: "pointer",
   },
