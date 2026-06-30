@@ -53,6 +53,7 @@ export default function Hero() {
       <div style={styles.overlayGradient} />
       {/* Radial vignette — pulls edges in */}
       <div style={styles.overlayVignette} />
+      <div style={styles.overlayBottomFade} />
 
       {/* ── Hero content ─────────────────────────────────────── */}
       <div style={styles.content}>
@@ -168,6 +169,20 @@ const styles: Record<string, React.CSSProperties> = {
     background:
       "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)",
     zIndex: 3,
+  },
+
+  // Final bottom fade — bridges the hero straight into the cream
+  // background of the next section, so there's exactly one smooth
+  // transition instead of a hard cut or a double-gradient seam.
+  overlayBottomFade: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "240px",
+    background: "linear-gradient(to bottom, transparent 0%, #F8F6F2 100%)",
+    zIndex: 4,
+    pointerEvents: "none" as const,
   },
 
   // ── Navbar
