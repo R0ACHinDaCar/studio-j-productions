@@ -161,7 +161,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   header: {
     maxWidth: "1400px",
-    margin: "0 auto 44px",
+    margin: "0 auto 28px",
   },
 
   eyebrow: {
@@ -200,7 +200,7 @@ const styles: Record<string, React.CSSProperties> = {
   mediaWrapper: {
     position: "relative",
     width: "100%",
-    aspectRatio: "4 / 3.2",
+    aspectRatio: "4 / 5",
     borderRadius: "4px",
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
