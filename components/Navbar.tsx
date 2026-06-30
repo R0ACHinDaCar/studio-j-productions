@@ -37,8 +37,8 @@ export default function Navbar() {
         <Image
           src="/logo-white.png"
           alt="Studio J Productions"
-          width={100}
-          height={40}
+          width={84}
+          height={34}
           style={{ objectFit: "contain", display: "block" }}
           priority
         />
@@ -88,7 +88,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "24px 48px",
+    padding: "16px 48px",
     transition: "background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease",
   },
 
