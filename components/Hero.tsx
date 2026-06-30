@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -52,35 +52,6 @@ export default function Hero() {
       {/* Radial vignette — pulls edges in */}
       <div style={styles.overlayVignette} />
 
-      {/* ── Navbar ───────────────────────────────────────────── */}
-      <motion.nav
-        style={styles.nav}
-        initial={{ opacity: 0, y: -8 }}
-        animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
-      >
-        {/* Logo — left-aligned, part of nav now */}
-        <a href="/" style={styles.navLogo}>
-          <Image
-            src="/logo-white.png"
-            alt="Studio J Productions"
-            width={100}
-            height={40}
-            style={{ objectFit: "contain", display: "block" }}
-            priority
-          />
-        </a>
-
-        {/* Nav links — right side */}
-        <div style={styles.navLinks}>
-          {["Services", "About", "Work", "Book"].map((link) => (
-            <NavLink key={link} href={`/${link.toLowerCase()}`}>
-              {link}
-            </NavLink>
-          ))}
-        </div>
-      </motion.nav>
-
       {/* ── Hero content ─────────────────────────────────────── */}
       <div style={styles.content}>
 
@@ -122,23 +93,6 @@ export default function Hero() {
       </motion.div>
 
     </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// NavLink
-// ---------------------------------------------------------------------------
-
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <motion.a
-      href={href}
-      style={styles.navLink}
-      whileHover={{ color: "#F8F6F2" }}
-      transition={{ duration: 0.2 }}
-    >
-      {children}
-    </motion.a>
   );
 }
 
@@ -213,39 +167,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   // ── Navbar
-  nav: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 30,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "28px 48px",
-  },
-
-  navLogo: {
-    display: "block",
-    textDecoration: "none",
-  },
-
-  navLinks: {
-    display: "flex",
-    alignItems: "center",
-    gap: "40px",
-  },
-
-  navLink: {
-    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-    fontSize: "13px",
-    fontWeight: 400,
-    letterSpacing: "0.08em",
-    color: "rgba(248, 246, 242, 0.55)",
-    textDecoration: "none",
-    cursor: "pointer",
-  },
-
   // ── Content
   content: {
     position: "relative",
