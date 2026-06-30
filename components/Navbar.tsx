@@ -88,7 +88,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "16px 48px",
+    padding: "10px 48px",
     transition: "background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease",
   },
 
