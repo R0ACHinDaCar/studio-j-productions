@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -88,8 +89,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
     }
   };
 
+  const MotionLink = motion.create(Link);
+
   return (
-    <motion.a
+    <MotionLink
       href={`/work/${project.slug}`}
       style={styles.card}
       initial={{ opacity: 0, y: 32 }}
@@ -142,7 +145,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <h3 style={styles.cardTitle}>{project.title}</h3>
         </div>
       </motion.div>
-    </motion.a>
+    </MotionLink>
   );
 }
 

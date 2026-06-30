@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 
 
@@ -73,18 +74,31 @@ export default function Services({ preview = false }: { preview?: boolean }) {
       </div>
 
       {preview && (
-        <motion.a
-          href="/services"
-          style={styles.viewAll}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
-        >
+        <MotionViewAllLink href="/services">
           View All Services →
-        </motion.a>
+        </MotionViewAllLink>
       )}
     </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// MotionViewAllLink — small helper so motion + Link compose cleanly
+// ---------------------------------------------------------------------------
+
+function MotionViewAllLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const MotionLink = motion.create(Link);
+  return (
+    <MotionLink
+      href={href}
+      style={styles.viewAll}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
+    >
+      {children}
+    </MotionLink>
   );
 }
 
@@ -157,9 +171,9 @@ function ServicePanel({
       >
         <h3 style={styles.expandedTitle}>{service.title}</h3>
         <p style={styles.expandedDescription}>{service.description}</p>
-        <a href={`/services/${service.slug}`} style={styles.learnMore}>
+        <Link href={`/services/${service.slug}`} style={styles.learnMore}>
           Learn More →
-        </a>
+        </Link>
       </motion.div>
     </motion.div>
   );

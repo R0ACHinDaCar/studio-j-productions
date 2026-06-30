@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -32,7 +33,7 @@ export default function Navbar() {
       transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
     >
       {/* Logo */}
-      <a href="/" style={styles.navLogo}>
+      <Link href="/" style={styles.navLogo}>
         <Image
           src="/logo-white.png"
           alt="Studio J Productions"
@@ -41,7 +42,7 @@ export default function Navbar() {
           style={{ objectFit: "contain", display: "block" }}
           priority
         />
-      </a>
+      </Link>
 
       {/* Nav links */}
       <div style={styles.navLinks}>
@@ -60,15 +61,16 @@ export default function Navbar() {
 // ---------------------------------------------------------------------------
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const MotionLink = motion.create(Link);
   return (
-    <motion.a
+    <MotionLink
       href={href}
       style={styles.navLink}
       whileHover={{ color: "#F8F6F2" }}
       transition={{ duration: 0.2 }}
     >
       {children}
-    </motion.a>
+    </MotionLink>
   );
 }
 
