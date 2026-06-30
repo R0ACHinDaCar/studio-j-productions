@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 
 const MotionLink = motion.create(Link);
@@ -11,6 +11,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -22,6 +23,18 @@ export default function Hero() {
     return () => video.removeEventListener("canplay", handle);
   }, []);
 
+  // Tracks scroll progress through the hero section specifically —
+  // 0 when the hero's top hits the top of viewport, 1 when its
+  // bottom does. We only care about the back half of that range,
+  // so the fade builds in as you approach the end of the hero.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const fadeOpacity = useTransform(scrollYProgress, [0.55, 1], [0, 1]);
+  const fadeHeight = useTransform(scrollYProgress, [0.55, 1], ["90px", "320px"]);
+
   const fadeUp = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
@@ -29,7 +42,7 @@ export default function Hero() {
   });
 
   return (
-    <section style={styles.section}>
+    <section ref={sectionRef} style={styles.section}>
 
       {/* ── Video ────────────────────────────────────────────── */}
       <video
@@ -53,7 +66,13 @@ export default function Hero() {
       <div style={styles.overlayGradient} />
       {/* Radial vignette — pulls edges in */}
       <div style={styles.overlayVignette} />
-      <div style={styles.overlayBottomFade} />
+      <motion.div
+        style={{
+          ...styles.overlayBottomFade,
+          opacity: fadeOpacity,
+          height: fadeHeight,
+        }}
+      />
 
       {/* ── Hero content ─────────────────────────────────────── */}
       <div style={styles.content}>
@@ -172,14 +191,14 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   // Final bottom fade — bridges the hero straight into the cream
-  // background of the next section, so there's exactly one smooth
-  // transition instead of a hard cut or a double-gradient seam.
+  // background of the next section. Height and opacity are driven
+  // by scroll progress (see fadeHeight/fadeOpacity above), so it
+  // builds in as the hero scrolls out rather than sitting static.
   overlayBottomFade: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: "90px",
     background: "linear-gradient(to bottom, transparent 0%, #F8F6F2 100%)",
     zIndex: 4,
     pointerEvents: "none" as const,
