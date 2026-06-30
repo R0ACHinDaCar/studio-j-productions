@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 
 const MotionLink = motion.create(Link);
@@ -43,8 +43,21 @@ const projects: Project[] = [
 ];
 
 export default function FeaturedProjects() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Same approach as Hero's bottom fade — builds in only during the
+  // back half of this section's scroll range, easing the cream
+  // background into the black Services filmstrip below.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const fadeOpacity = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
+  const fadeHeight = useTransform(scrollYProgress, [0.6, 1], ["80px", "260px"]);
+
   return (
-    <section style={styles.section}>
+    <section ref={sectionRef} style={styles.section}>
       {/* Section header */}
       <motion.div
         style={styles.header}
@@ -63,6 +76,16 @@ export default function FeaturedProjects() {
           <ProjectCard key={project.slug} project={project} index={i} />
         ))}
       </div>
+
+      {/* Bottom fade — bridges this section's cream background into
+          the black Services filmstrip below, builds in on scroll. */}
+      <motion.div
+        style={{
+          ...styles.bottomFade,
+          opacity: fadeOpacity,
+          height: fadeHeight,
+        }}
+      />
     </section>
   );
 }
@@ -155,8 +178,21 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 const styles: Record<string, React.CSSProperties> = {
   section: {
+    position: "relative",
     backgroundColor: "#F8F6F2",
     padding: "180px 48px 120px",
+    overflow: "hidden",
+  },
+
+  // Fades from transparent into solid black, anchored to the bottom
+  // edge — bridges into the Services filmstrip section below.
+  bottomFade: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    background: "linear-gradient(to bottom, transparent 0%, #111111 100%)",
+    pointerEvents: "none" as const,
   },
 
   header: {
