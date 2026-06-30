@@ -45,6 +45,11 @@ const projects: Project[] = [
 export default function FeaturedProjects() {
   return (
     <section style={styles.section}>
+      {/* Transition strip — eases the hero's dark video into this
+          section's cream background, giving the navbar a comfortable
+          zone to switch from white to black without a hard cut. */}
+      <div style={styles.transitionStrip} />
+
       {/* Section header */}
       <motion.div
         style={styles.header}
@@ -155,8 +160,22 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 const styles: Record<string, React.CSSProperties> = {
   section: {
+    position: "relative",
     backgroundColor: "#F8F6F2",
     padding: "180px 48px 120px",
+  },
+
+  // Fades from solid black into transparent, sitting right at the
+  // top edge of this section so it visually bridges the dark hero
+  // video into the cream background below.
+  transitionStrip: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "160px",
+    background: "linear-gradient(to bottom, #0a0a0a 0%, rgba(10,10,10,0) 100%)",
+    pointerEvents: "none" as const,
   },
 
   header: {

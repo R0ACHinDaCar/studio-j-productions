@@ -16,13 +16,20 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      // Trigger the dark-mode switch near the end of the hero's full-height
+      // section, not immediately on scroll — keeps white logo/text legible
+      // against the dark hero for as long as it's actually on screen.
+      const threshold = window.innerHeight * 0.85;
+      setScrolled(window.scrollY > threshold);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-
+  // The homepage has a dark, full-bleed hero behind the nav, so the
+  // logo and links should start light and only react to scroll there.
+  // Every other page (portal, services, etc.) has a light background
+  // from the very top, so the nav should always render in "dark mode."
   const isHomepage = pathname === "/";
   const isDark = isHomepage ? scrolled : true;
 
