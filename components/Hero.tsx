@@ -179,7 +179,7 @@ const styles: Record<string, React.CSSProperties> = {
     bottom: 0,
     left: 0,
     right: 0,
-    height: "240px",
+    height: "90px",
     background: "linear-gradient(to bottom, transparent 0%, #F8F6F2 100%)",
     zIndex: 4,
     pointerEvents: "none" as const,
