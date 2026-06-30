@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
+const MotionLink = motion.create(Link);
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -61,7 +62,6 @@ export default function Navbar() {
 // ---------------------------------------------------------------------------
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  const MotionLink = motion.create(Link);
   return (
     <MotionLink
       href={href}

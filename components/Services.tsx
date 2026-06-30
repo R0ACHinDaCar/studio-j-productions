@@ -4,22 +4,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-// ---------------------------------------------------------------------------
-// Services.tsx — Studio J Productions
-//
-// "Filmstrip" layout. Full-height vertical panels sit side by side.
-// On hover, the active panel expands width-wise (like selecting a
-// chapter in a film) while the others compress — video plays in the
-// expanded panel, title + description + Learn More slide in.
-//
-// Desktop: hover-driven, horizontal panels.
-// Mobile: hover doesn't exist, so panels fall back to equal-height
-// stacked rows that expand on tap (handled via CSS breakpoint + isOpen state).
-//
-// Used on:
-//   • Homepage — pass `preview` to show first 3 only
-//   • /services page — full list
-// ---------------------------------------------------------------------------
+const MotionLink = motion.create(Link);
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -102,7 +87,6 @@ export default function Services({ preview = false }: { preview?: boolean }) {
 // ---------------------------------------------------------------------------
 
 function MotionViewAllLink({ href, children }: { href: string; children: React.ReactNode }) {
-  const MotionLink = motion.create(Link);
   return (
     <MotionLink
       href={href}

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+const MotionLink = motion.create(Link);
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -104,7 +105,6 @@ export default function Hero() {
 function HeroButton({ href, children }: { href: string; children: React.ReactNode }) {
   // motion() wraps Link so we keep the hover animation while using
   // Next.js client-side routing instead of a plain <a> tag
-  const MotionLink = motion.create(Link);
   return (
     <MotionLink
       href={href}
