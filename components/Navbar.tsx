@@ -8,6 +8,7 @@ import Link from "next/link";
 
 const MotionLink = motion.create(Link);
 
+
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Navbar() {
@@ -15,17 +16,21 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    // Checks what's actually rendered directly beneath the navbar and
-    // reads its data-nav-theme attribute ("dark" or "light"). This
-    // means the nav automatically reacts to however many dark/light
-    // sections a page has, instead of a single hardcoded scroll point.
     const checkBackground = () => {
-      const probeY = 30; // a point vertically inside the nav bar itself
+      const probeY = 30;
       const probeX = window.innerWidth / 2;
+
+      // The navbar itself sits at this exact point (it's position:
+      // fixed, top:0), so elementFromPoint would just find the nav's
+      // own DOM and never see what's actually behind it. Temporarily
+      // disable pointer-events on the nav so the probe sees through it.
+      const navEl = document.getElementById("site-navbar");
+      if (navEl) navEl.style.pointerEvents = "none";
+
       const stack = document.elementFromPoint(probeX, probeY);
 
-      // Walk up from whatever element is at that point until we find
-      // one (or an ancestor) carrying our theme marker.
+      if (navEl) navEl.style.pointerEvents = "";
+
       let el: Element | null = stack;
       let theme: string | null = null;
       while (el && !theme) {
@@ -49,6 +54,7 @@ export default function Navbar() {
 
   return (
     <motion.nav
+      id="site-navbar"
       style={{
         ...styles.nav,
         backgroundColor: showLightBar
