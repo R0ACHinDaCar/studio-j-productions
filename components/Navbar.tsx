@@ -30,25 +30,22 @@ export default function Navbar() {
   // logo and links should start light and only react to scroll there.
   // Every other page (portal, services, etc.) has a light background
   // from the very top, so the nav should always render in "dark mode."
+  // Once scrolled past the hero, the homepage nav matches this same
+  // light treatment instead of switching to a dark bar.
   const isHomepage = pathname === "/";
   const isDark = isHomepage ? scrolled : true;
+  const showLightBar = isDark; // same condition, named for clarity below
 
   return (
     <motion.nav
       style={{
         ...styles.nav,
-        backgroundColor: isHomepage
-          ? scrolled
-            ? "rgba(10, 10, 10, 0.7)"
-            : "transparent"
-          : "rgba(248, 246, 242, 0.85)",
-        backdropFilter: isHomepage && !scrolled ? "none" : "blur(12px)",
-        WebkitBackdropFilter: isHomepage && !scrolled ? "none" : "blur(12px)",
-        boxShadow: !isHomepage
-          ? "0 1px 0 rgba(17,17,17,0.08)"
-          : scrolled
-          ? "0 1px 0 rgba(255,255,255,0.06)"
-          : "none",
+        backgroundColor: showLightBar
+          ? "rgba(248, 246, 242, 0.75)"
+          : "transparent",
+        backdropFilter: showLightBar ? "blur(8px)" : "none",
+        WebkitBackdropFilter: showLightBar ? "blur(8px)" : "none",
+        boxShadow: showLightBar ? "0 1px 0 rgba(17,17,17,0.08)" : "none",
       }}
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
