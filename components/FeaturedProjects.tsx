@@ -156,12 +156,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 const styles: Record<string, React.CSSProperties> = {
   section: {
     backgroundColor: "#F8F6F2",
-    padding: "140px 48px",
+    padding: "180px 48px 120px",
   },
 
   header: {
     maxWidth: "1400px",
-    margin: "0 auto 64px",
+    margin: "0 auto 44px",
   },
 
   eyebrow: {
@@ -200,7 +200,7 @@ const styles: Record<string, React.CSSProperties> = {
   mediaWrapper: {
     position: "relative",
     width: "100%",
-    aspectRatio: "4 / 5",
+    aspectRatio: "4 / 3.2",
     borderRadius: "4px",
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
