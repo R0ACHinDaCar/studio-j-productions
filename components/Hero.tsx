@@ -86,7 +86,7 @@ export default function Hero() {
 
         {/* Headline — "YOUR STORY." big and bold */}
         <motion.p style={styles.headlineTop} {...fadeUp(0.25)}>
-          Your Story.
+          Your Story
         </motion.p>
 
         {/* "Elevated." — even larger, italic, slightly dimmer */}
@@ -259,6 +259,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: "column" as const,
     alignItems: "center",
     gap: "0px",
+    paddingBottom: "100px",
   },
 
   // "Your Story." — large, bold, serif
@@ -291,7 +292,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 300,
     lineHeight: 1.8,
     color: "rgba(248, 246, 242, 0.6)",
-    margin: "0 0 56px",
+    margin: "0 0 44px",
     maxWidth: "480px",
   },
 
