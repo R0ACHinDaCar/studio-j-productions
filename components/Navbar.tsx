@@ -47,9 +47,15 @@ export default function Navbar() {
 
       {/* Nav links */}
       <div style={styles.navLinks}>
-        {["Services", "About", "Work", "Book"].map((link) => (
-          <NavLink key={link} href={`/${link.toLowerCase()}`}>
-            {link}
+        {[
+          { label: "Services", href: "/services" },
+          { label: "About", href: "/about" },
+          { label: "Work", href: "/work" },
+          { label: "Book", href: "/book" },
+          { label: "Portal", href: "/portal" },
+        ].map((link) => (
+          <NavLink key={link.label} href={link.href}>
+            {link.label}
           </NavLink>
         ))}
       </div>
