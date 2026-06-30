@@ -12,29 +12,40 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Trigger the dark-mode switch near the end of the hero's full-height
-      // section, not immediately on scroll — keeps white logo/text legible
-      // against the dark hero for as long as it's actually on screen.
-      const threshold = window.innerHeight * 0.85;
-      setScrolled(window.scrollY > threshold);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Checks what's actually rendered directly beneath the navbar and
+    // reads its data-nav-theme attribute ("dark" or "light"). This
+    // means the nav automatically reacts to however many dark/light
+    // sections a page has, instead of a single hardcoded scroll point.
+    const checkBackground = () => {
+      const probeY = 30; // a point vertically inside the nav bar itself
+      const probeX = window.innerWidth / 2;
+      const stack = document.elementFromPoint(probeX, probeY);
 
-  // The homepage has a dark, full-bleed hero behind the nav, so the
-  // logo and links should start light and only react to scroll there.
-  // Every other page (portal, services, etc.) has a light background
-  // from the very top, so the nav should always render in "dark mode."
-  // Once scrolled past the hero, the homepage nav matches this same
-  // light treatment instead of switching to a dark bar.
-  const isHomepage = pathname === "/";
-  const isDark = isHomepage ? scrolled : true;
-  const showLightBar = isDark; // same condition, named for clarity below
+      // Walk up from whatever element is at that point until we find
+      // one (or an ancestor) carrying our theme marker.
+      let el: Element | null = stack;
+      let theme: string | null = null;
+      while (el && !theme) {
+        theme = el.getAttribute("data-nav-theme");
+        el = el.parentElement;
+      }
+
+      setIsDark(theme === "dark");
+    };
+
+    checkBackground();
+    window.addEventListener("scroll", checkBackground, { passive: true });
+    window.addEventListener("resize", checkBackground);
+    return () => {
+      window.removeEventListener("scroll", checkBackground);
+      window.removeEventListener("resize", checkBackground);
+    };
+  }, [pathname]);
+
+  const showLightBar = isDark;
 
   return (
     <motion.nav

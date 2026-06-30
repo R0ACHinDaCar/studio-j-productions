@@ -25,7 +25,7 @@ export default async function PortalPage() {
     // Logged in, but no matching client row — shouldn't normally happen,
     // but fail gracefully instead of crashing.
     return (
-      <main style={styles.main}>
+      <main data-nav-theme="light" style={styles.main}>
         <div style={styles.errorBox}>
           <p style={styles.errorText}>
             We couldn&apos;t find an account linked to this login. Please
@@ -39,12 +39,12 @@ export default async function PortalPage() {
   // Fetch this client's projects
   const { data: projects } = await supabase
     .from("projects")
-    .select("id, title, status, description, nas_link, invoice_link, created_at")
+    .select("id, title, status, description, nas_link, invoice_link, thumbnail_url, created_at")
     .eq("client_id", client.id)
     .order("created_at", { ascending: false });
 
   return (
-    <main style={styles.main}>
+    <main data-nav-theme="light" style={styles.main}>
       <div style={styles.inner}>
         {/* Header */}
         <div style={styles.header}>
@@ -59,36 +59,49 @@ export default async function PortalPage() {
           ) : (
             projects.map((project) => (
               <div key={project.id} style={styles.projectCard}>
-                <div style={styles.projectHeader}>
-                  <h2 style={styles.projectTitle}>{project.title}</h2>
-                  <span style={styles.statusBadge}>{project.status}</span>
-                </div>
-
-                {project.description && (
-                  <p style={styles.projectDescription}>{project.description}</p>
+                {/* Thumbnail — only renders if a URL is set */}
+                {project.thumbnail_url && (
+                  <div style={styles.thumbnailWrapper}>
+                    <img
+                      src={project.thumbnail_url}
+                      alt={project.title}
+                      style={styles.thumbnail}
+                    />
+                  </div>
                 )}
 
-                <div style={styles.linkRow}>
-                  {project.nas_link && (
-                    <a
-                      href={project.nas_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={styles.linkButton}
-                    >
-                      View Files →
-                    </a>
+                <div style={styles.cardContent}>
+                  <div style={styles.projectHeader}>
+                    <h2 style={styles.projectTitle}>{project.title}</h2>
+                    <span style={styles.statusBadge}>{project.status}</span>
+                  </div>
+
+                  {project.description && (
+                    <p style={styles.projectDescription}>{project.description}</p>
                   )}
-                  {project.invoice_link && (
-                    <a
-                      href={project.invoice_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={styles.linkButton}
-                    >
-                      View Invoice →
-                    </a>
-                  )}
+
+                  <div style={styles.linkRow}>
+                    {project.nas_link && (
+                      <a
+                        href={project.nas_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={styles.linkButton}
+                      >
+                        View Files →
+                      </a>
+                    )}
+                    {project.invoice_link && (
+                      <a
+                        href={project.invoice_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={styles.linkButton}
+                      >
+                        View Invoice →
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             ))
@@ -150,10 +163,32 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   projectCard: {
+    display: "flex",
+    flexDirection: "row" as const,
     backgroundColor: "#ffffff",
     border: "1px solid rgba(17, 17, 17, 0.1)",
     borderRadius: "4px",
+    overflow: "hidden",
+  },
+
+  thumbnailWrapper: {
+    flexShrink: 0,
+    width: "220px",
+    minHeight: "100%",
+    backgroundColor: "#1a1a1a",
+  },
+
+  thumbnail: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    display: "block",
+  },
+
+  cardContent: {
+    flex: 1,
     padding: "32px",
+    minWidth: 0, // allows text to wrap properly inside flex child
   },
 
   projectHeader: {

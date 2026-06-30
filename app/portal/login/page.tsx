@@ -39,7 +39,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main style={styles.main}>
+    <main data-nav-theme="light" style={styles.main}>
       <motion.div
         style={styles.card}
         initial={{ opacity: 0, y: 24 }}

@@ -42,7 +42,7 @@ export default function Hero() {
   });
 
   return (
-    <section ref={sectionRef} style={styles.section}>
+    <section ref={sectionRef} data-nav-theme="dark" style={styles.section}>
 
       {/* ── Video ────────────────────────────────────────────── */}
       <video

@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const MotionLink = motion.create(Link);
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -47,7 +46,7 @@ export default function Services({ preview = false }: { preview?: boolean }) {
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   return (
-    <section style={styles.section}>
+    <section data-nav-theme="dark" style={styles.section}>
       {/* Header */}
       <motion.div
         style={styles.header}

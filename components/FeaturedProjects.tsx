@@ -53,11 +53,11 @@ export default function FeaturedProjects() {
     offset: ["start start", "end start"],
   });
 
-  const fadeOpacity = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
-  const fadeHeight = useTransform(scrollYProgress, [0.6, 1], ["80px", "260px"]);
+  const fadeOpacity = useTransform(scrollYProgress, [0.55, 1], [0, 1]);
+  const fadeHeight = useTransform(scrollYProgress, [0.55, 1], ["100px", "420px"]);
 
   return (
-    <section ref={sectionRef} style={styles.section}>
+    <section ref={sectionRef} data-nav-theme="light" style={styles.section}>
       {/* Section header */}
       <motion.div
         style={styles.header}
@@ -180,7 +180,7 @@ const styles: Record<string, React.CSSProperties> = {
   section: {
     position: "relative",
     backgroundColor: "#F8F6F2",
-    padding: "180px 48px 120px",
+    padding: "180px 48px 280px",
     overflow: "hidden",
   },
 
