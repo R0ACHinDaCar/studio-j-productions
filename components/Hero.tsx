@@ -4,9 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-// ---------------------------------------------------------------------------
-// Hero.tsx — Studio J Productions
-// ---------------------------------------------------------------------------
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -23,11 +20,10 @@ export default function Hero() {
     return () => video.removeEventListener("canplay", handle);
   }, []);
 
-  // Reusable fade-up variant factory
   const fadeUp = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
-    transition: { duration: 0.85, ease: EASE, delay },
+    transition: { duration: 0.9, ease: EASE, delay },
   });
 
   return (
@@ -49,42 +45,64 @@ export default function Hero() {
       />
 
       {/* ── Overlays ─────────────────────────────────────────── */}
+      {/* Base dark — increased from 0.52 to 0.68 */}
       <div style={styles.overlayDark} />
+      {/* Top-to-bottom gradient — darker top, bright centre, darker bottom */}
+      <div style={styles.overlayGradient} />
+      {/* Radial vignette — pulls edges in */}
       <div style={styles.overlayVignette} />
 
-      {/* ── Logo ─────────────────────────────────────────────── */}
-      <motion.div
-        style={styles.logoWrapper}
-        initial={{ opacity: 0 }}
-        animate={ready ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1.0, ease: EASE, delay: 0.1 }}
+      {/* ── Navbar ───────────────────────────────────────────── */}
+      <motion.nav
+        style={styles.nav}
+        initial={{ opacity: 0, y: -8 }}
+        animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
+        transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
       >
-        <Image
-          src="/logo-white.png"
-          alt="Studio J Productions"
-          width={120}
-          height={48}
-          style={styles.logo}
-          priority
-        />
-      </motion.div>
+        {/* Logo — left-aligned, part of nav now */}
+        <a href="/" style={styles.navLogo}>
+          <Image
+            src="/logo-white.png"
+            alt="Studio J Productions"
+            width={100}
+            height={40}
+            style={{ objectFit: "contain", display: "block" }}
+            priority
+          />
+        </a>
 
-      {/* ── Content ──────────────────────────────────────────── */}
+        {/* Nav links — right side */}
+        <div style={styles.navLinks}>
+          {["Services", "About", "Work", "Book"].map((link) => (
+            <NavLink key={link} href={`/${link.toLowerCase()}`}>
+              {link}
+            </NavLink>
+          ))}
+        </div>
+      </motion.nav>
+
+      {/* ── Hero content ─────────────────────────────────────── */}
       <div style={styles.content}>
 
-        <motion.h1 style={styles.headline} {...fadeUp(0.25)}>
+        {/* Headline — "YOUR STORY." big and bold */}
+        <motion.p style={styles.headlineTop} {...fadeUp(0.25)}>
           Your Story.
-          <br />
-          <span style={styles.headlineItalic}>Elevated.</span>
-        </motion.h1>
-
-        <motion.p style={styles.subheadline} {...fadeUp(0.42)}>
-          Premium cinematic films for businesses, brands,
-          <br />
-          creators, and unforgettable moments.
         </motion.p>
 
-        <motion.div {...fadeUp(0.58)}>
+        {/* "Elevated." — even larger, italic, slightly dimmer */}
+        <motion.p style={styles.headlineBottom} {...fadeUp(0.35)}>
+          <em>Elevated.</em>
+        </motion.p>
+
+        {/* Subheadline — larger, narrower, more breathing room */}
+        <motion.p style={styles.subheadline} {...fadeUp(0.5)}>
+          Premium cinematic films that help businesses,
+          <br />
+          brands, and people leave an impression.
+        </motion.p>
+
+        {/* CTA */}
+        <motion.div {...fadeUp(0.65)}>
           <HeroButton href="/booking">Start Your Project</HeroButton>
         </motion.div>
 
@@ -95,7 +113,7 @@ export default function Hero() {
         style={styles.scrollIndicator}
         initial={{ opacity: 0 }}
         animate={ready ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 1.2 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 1.3 }}
       >
         <span style={styles.scrollLabel}>Scroll</span>
         <div style={styles.scrollLine}>
@@ -104,6 +122,23 @@ export default function Hero() {
       </motion.div>
 
     </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// NavLink
+// ---------------------------------------------------------------------------
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <motion.a
+      href={href}
+      style={styles.navLink}
+      whileHover={{ color: "#F8F6F2" }}
+      transition={{ duration: 0.2 }}
+    >
+      {children}
+    </motion.a>
   );
 }
 
@@ -133,7 +168,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: "relative",
     width: "100%",
     height: "100dvh",
-    minHeight: "600px",
+    minHeight: "640px",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
@@ -150,78 +185,125 @@ const styles: Record<string, React.CSSProperties> = {
     objectPosition: "center",
   },
 
+  // Darker base — was 0.52, now 0.68
   overlayDark: {
     position: "absolute",
     inset: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.52)",
+    backgroundColor: "rgba(0, 0, 0, 0.68)",
     zIndex: 1,
   },
 
-  overlayVignette: {
+  // Top darker → centre clear → bottom darker
+  // Guides the eye to the centre where the headline lives
+  overlayGradient: {
     position: "absolute",
     inset: 0,
-    background: "radial-gradient(ellipse at center, transparent 30%, rgba(14, 10, 6, 0.6) 100%)",
+    background:
+      "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.5) 100%)",
     zIndex: 2,
   },
 
-  logoWrapper: {
+  // Edge vignette
+  overlayVignette: {
     position: "absolute",
-    top: "40px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 20,
+    inset: 0,
+    background:
+      "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)",
+    zIndex: 3,
   },
 
-  logo: {
-    objectFit: "contain",
+  // ── Navbar
+  nav: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 30,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "28px 48px",
+  },
+
+  navLogo: {
     display: "block",
-    // Drop any baked-in shadow/border from the PNG by keeping it small and clean
-    filter: "drop-shadow(0 0 0 transparent)",
+    textDecoration: "none",
   },
 
+  navLinks: {
+    display: "flex",
+    alignItems: "center",
+    gap: "40px",
+  },
+
+  navLink: {
+    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+    fontSize: "13px",
+    fontWeight: 400,
+    letterSpacing: "0.08em",
+    color: "rgba(248, 246, 242, 0.55)",
+    textDecoration: "none",
+    cursor: "pointer",
+  },
+
+  // ── Content
   content: {
     position: "relative",
     zIndex: 10,
     textAlign: "center",
     padding: "0 24px",
-    maxWidth: "860px",
-    // Push content down slightly so it doesn't crowd the logo
-    marginTop: "80px",
+    maxWidth: "900px",
+    // Push down to clear the navbar
+    marginTop: "60px",
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    gap: "0px",
   },
 
-  headline: {
+  // "Your Story." — large, bold, serif
+  headlineTop: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
-    fontSize: "clamp(52px, 8vw, 112px)",
-    fontWeight: 400,
-    lineHeight: 1.05,
-    letterSpacing: "-0.02em",
+    fontSize: "clamp(56px, 9vw, 120px)",
+    fontWeight: 700,
+    lineHeight: 1.0,
+    letterSpacing: "-0.03em",
     color: "#F8F6F2",
-    margin: "0 0 28px",
+    margin: "0 0 8px",
   },
 
-  headlineItalic: {
+  // "Elevated." — even larger, italic, slightly translucent
+  headlineBottom: {
+    fontFamily: "'Georgia', 'Times New Roman', serif",
+    fontSize: "clamp(64px, 10.5vw, 140px)",
+    fontWeight: 400,
     fontStyle: "italic",
-    color: "rgba(248, 246, 242, 0.85)",
+    lineHeight: 1.0,
+    letterSpacing: "-0.03em",
+    color: "rgba(248, 246, 242, 0.8)",
+    margin: "0 0 52px",
   },
 
+  // Larger, narrower, more air
   subheadline: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-    fontSize: "clamp(15px, 1.8vw, 19px)",
+    fontSize: "clamp(16px, 2vw, 22px)",
     fontWeight: 300,
-    lineHeight: 1.7,
-    color: "rgba(248, 246, 242, 0.65)",
-    margin: "0 0 48px",
+    lineHeight: 1.8,
+    color: "rgba(248, 246, 242, 0.6)",
+    margin: "0 0 56px",
+    maxWidth: "480px",
   },
 
   button: {
     display: "inline-block",
-    padding: "16px 40px",
-    border: "1px solid rgba(248, 246, 242, 0.6)",
+    padding: "18px 48px",
+    border: "1px solid rgba(248, 246, 242, 0.5)",
     borderRadius: "2px",
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     fontWeight: 500,
-    letterSpacing: "0.12em",
+    letterSpacing: "0.14em",
     textTransform: "uppercase" as const,
     textDecoration: "none",
     color: "#F8F6F2",
@@ -229,6 +311,7 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: "pointer",
   },
 
+  // ── Scroll
   scrollIndicator: {
     position: "absolute",
     bottom: "40px",
@@ -247,20 +330,20 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     letterSpacing: "0.2em",
     textTransform: "uppercase" as const,
-    color: "rgba(248, 246, 242, 0.4)",
+    color: "rgba(248, 246, 242, 0.35)",
   },
 
   scrollLine: {
     width: "1px",
     height: "48px",
-    backgroundColor: "rgba(248, 246, 242, 0.15)",
+    backgroundColor: "rgba(248, 246, 242, 0.12)",
     overflow: "hidden",
   },
 
   scrollLineFill: {
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(248, 246, 242, 0.6)",
+    backgroundColor: "rgba(248, 246, 242, 0.55)",
     animation: "scrollDrop 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite",
   },
 };
