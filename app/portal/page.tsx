@@ -37,11 +37,27 @@ export default async function PortalPage() {
   }
 
   // Fetch this client's projects
-  const { data: projects } = await supabase
+  const { data: projects, error: projectsError } = await supabase
     .from("projects")
     .select("id, title, status, description, nas_link, invoice_link, thumbnail_url, created_at")
     .eq("client_id", client.id)
     .order("created_at", { ascending: false });
+
+  // ── TEMPORARY DEBUG BLOCK — remove once the issue is resolved ──────
+  const DEBUG = true;
+  if (DEBUG) {
+    return (
+      <main style={{ padding: "160px 48px", fontFamily: "monospace", fontSize: "13px", whiteSpace: "pre-wrap" }}>
+        <h1 style={{ fontSize: "20px", marginBottom: "24px" }}>Portal Debug Output</h1>
+        <p><strong>Logged-in user.id:</strong> {user.id}</p>
+        <p><strong>Matched client.id:</strong> {client.id}</p>
+        <p><strong>Matched client.name:</strong> {client.name}</p>
+        <p><strong>projectsError:</strong> {JSON.stringify(projectsError, null, 2)}</p>
+        <p><strong>projects returned:</strong> {JSON.stringify(projects, null, 2)}</p>
+      </main>
+    );
+  }
+  // ── END DEBUG BLOCK ─────────────────────────────────────────────────
 
   return (
     <main data-nav-theme="light" style={styles.main}>
