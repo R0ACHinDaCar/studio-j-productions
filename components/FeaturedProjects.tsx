@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 
-
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 interface Project {
@@ -21,21 +20,21 @@ const projects: Project[] = [
     slug: "placeholder-one",
     title: "Project Title One",
     category: "Commercial",
-    thumbnail: "/projects/placeholder-1.jpg",
+    thumbnail: "/projects/placeholder-1.JPG",
     video: "/projects/placeholder-1.mp4",
   },
   {
     slug: "placeholder-two",
     title: "Project Title Two",
     category: "Wedding",
-    thumbnail: "/projects/placeholder-2.jpg",
+    thumbnail: "/projects/placeholder-2.JPG",
     video: "/projects/placeholder-2.mp4",
   },
   {
     slug: "placeholder-three",
     title: "Project Title Three",
     category: "Sports",
-    thumbnail: "/projects/placeholder-3.jpg",
+    thumbnail: "/projects/placeholder-3.JPG",
     video: "/projects/placeholder-3.mp4",
   },
 ];
