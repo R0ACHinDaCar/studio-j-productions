@@ -8,13 +8,21 @@ import { motion, AnimatePresence } from "framer-motion";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const SERVICES = ["Events", "Promotional Content", "Photography", "Sports"];
-const BUDGETS = ["Under $500", "$500 – $1,000", "$1,000 – $2,500", "$2,500 – $5,000", "$5,000+", "Not sure yet"];
+
+const UPGRADES = [
+  { label: "Drone Coverage", note: "Coming soon", disabled: true },
+  { label: "GoPro Coverage", note: null, disabled: false },
+  { label: "Expedited Editing", note: null, disabled: false },
+  { label: "Photos & Video", note: null, disabled: false },
+  { label: "Interviews", note: null, disabled: false },
+  { label: "Full Day of Filming", note: null, disabled: false },
+];
 
 interface FormData {
   service: string;
   location: string;
   date: string;
-  budget: string;
+  upgrades: string[];
   name: string;
   email: string;
   phone: string;
@@ -25,7 +33,7 @@ const EMPTY: FormData = {
   service: "",
   location: "",
   date: "",
-  budget: "",
+  upgrades: [],
   name: "",
   email: "",
   phone: "",
@@ -39,8 +47,14 @@ export default function BookPage() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const set = (key: keyof FormData, value: string) =>
-    setForm((f) => ({ ...f, [key]: value }));
+  const set = (key: keyof FormData, value: string) => {
+    if (key === "upgrades") {
+      // upgrades passed as "||"-joined string, convert back to array
+      setForm((f) => ({ ...f, upgrades: value ? value.split("||") : [] }));
+    } else {
+      setForm((f) => ({ ...f, [key]: value }));
+    }
+  };
 
   const next = () => setStep((s) => s + 1);
   const back = () => setStep((s) => s - 1);
@@ -108,20 +122,50 @@ export default function BookPage() {
       <StepNav onBack={back} onNext={next} nextDisabled={!form.date.trim()} />
     </StepShell>,
 
-    // Step 3 — Budget
-    <StepShell key="budget" title="What's your budget?" subtitle="This helps us recommend the right package for you.">
+    // Step 3 — Upgrades
+    <StepShell key="upgrades" title="Any add-ons?" subtitle="Select everything that applies — you can choose multiple.">
       <div style={styles.optionGrid}>
-        {BUDGETS.map((b) => (
-          <OptionCard
-            key={b}
-            label={b}
-            selected={form.budget === b}
-            onSelect={() => { set("budget", b); setTimeout(next, 300); }}
-          />
-        ))}
+        {UPGRADES.map((u) => {
+          const selected = form.upgrades.includes(u.label);
+          return (
+            <motion.button
+              key={u.label}
+              disabled={u.disabled}
+              onClick={() => {
+                if (u.disabled) return;
+                set("upgrades", selected
+                  ? form.upgrades.filter((x) => x !== u.label).join("||")
+                  : [...form.upgrades, u.label].join("||")
+                );
+              }}
+              style={{
+                ...styles.optionCard,
+                backgroundColor: u.disabled
+                  ? "rgba(17,17,17,0.04)"
+                  : selected ? "#111111" : "#ffffff",
+                color: u.disabled
+                  ? "rgba(17,17,17,0.3)"
+                  : selected ? "#F8F6F2" : "#111111",
+                borderColor: u.disabled
+                  ? "rgba(17,17,17,0.08)"
+                  : selected ? "#111111" : "rgba(17,17,17,0.15)",
+                cursor: u.disabled ? "not-allowed" : "pointer",
+                position: "relative",
+              }}
+              whileHover={u.disabled ? {} : { scale: 1.02 }}
+              whileTap={u.disabled ? {} : { scale: 0.98 }}
+              transition={{ duration: 0.18 }}
+            >
+              {u.label}
+              {u.note && (
+                <span style={styles.upgradeNote}>{u.note}</span>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
       <div style={{ marginTop: "24px" }}>
-        <StepNav onBack={back} onNext={next} nextDisabled={!form.budget} />
+        <StepNav onBack={back} onNext={next} nextLabel="Continue →" />
       </div>
     </StepShell>,
 
@@ -436,7 +480,14 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "14px 32px",
   },
 
-  error: {
+  upgradeNote: {
+    display: "block",
+    fontSize: "11px",
+    fontWeight: 400,
+    letterSpacing: "0.06em",
+    marginTop: "4px",
+    opacity: 0.6,
+  },
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     color: "#b91c1c",
