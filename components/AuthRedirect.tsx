@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase-client";
 
 
+
 export default function AuthRedirect() {
   const router = useRouter();
   const supabase = createClient();
