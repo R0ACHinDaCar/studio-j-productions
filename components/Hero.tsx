@@ -167,7 +167,7 @@ const styles: Record<string, React.CSSProperties> = {
   overlayDark: {
     position: "absolute",
     inset: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.68)",
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
     zIndex: 1,
   },
 
@@ -212,8 +212,8 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: "center",
     padding: "0 24px",
     maxWidth: "900px",
-    // Push down to clear the navbar
-    marginTop: "60px",
+    // Push down to clear the navbar on all screen sizes
+    marginTop: "100px",
     display: "flex",
     flexDirection: "column" as const,
     alignItems: "center",
