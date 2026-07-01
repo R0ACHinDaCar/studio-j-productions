@@ -52,11 +52,13 @@ export default function Navbar() {
       style={{
         ...styles.nav,
         backgroundColor: isDark
-          ? "transparent"
+          ? "rgba(10, 10, 10, 0.6)"
           : "rgba(248, 246, 242, 0.82)",
-        backdropFilter: isDark ? "none" : "blur(10px)",
-        WebkitBackdropFilter: isDark ? "none" : "blur(10px)",
-        boxShadow: isDark ? "none" : "0 1px 0 rgba(17,17,17,0.07)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        boxShadow: isDark
+          ? "0 1px 0 rgba(255,255,255,0.06)"
+          : "0 1px 0 rgba(17,17,17,0.07)",
       }}
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
