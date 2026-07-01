@@ -8,7 +8,6 @@ import Link from "next/link";
 
 const MotionLink = motion.create(Link);
 
-
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const NAV_LINKS = [
@@ -24,8 +23,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkBackground = () => {
-    
-        const navEl = document.getElementById("site-navbar");
+      const navEl = document.getElementById("site-navbar");
       if (navEl) navEl.style.pointerEvents = "none";
       const el = document.elementFromPoint(window.innerWidth / 2, 30);
       if (navEl) navEl.style.pointerEvents = "";
@@ -36,7 +34,6 @@ export default function Navbar() {
         theme = node.getAttribute("data-nav-theme");
         node = node.parentElement;
       }
-      
       setIsDark(theme === "dark");
     };
 
@@ -49,7 +46,6 @@ export default function Navbar() {
     };
   }, [pathname]);
 
-  
   return (
     <motion.nav
       id="site-navbar"
@@ -111,7 +107,7 @@ function NavLink({
   active: boolean;
 }) {
   const baseColor = dark
-    ? "rgba(248, 246, 242, 0.7)"
+    ? "rgba(248, 246, 242, 0.9)"
     : "rgba(17, 17, 17, 0.55)";
   const hoverColor = dark ? "#F8F6F2" : "#111111";
   const activeColor = dark ? "#F8F6F2" : "#111111";
@@ -123,6 +119,7 @@ function NavLink({
         ...styles.navLink,
         color: active ? activeColor : baseColor,
         fontWeight: active ? 600 : 500,
+        textShadow: dark ? "0 1px 8px rgba(0,0,0,0.5)" : "none",
       }}
       whileHover={{ color: hoverColor }}
       transition={{ duration: 0.18 }}
