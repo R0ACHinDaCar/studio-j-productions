@@ -2,9 +2,12 @@
 
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Link from "next/link";
 
-const MotionLink = motion.create(Link);
+
+
+
+
+
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -20,21 +23,21 @@ interface Project {
 // ── Placeholder data — replace with real projects ───────────────────────
 const projects: Project[] = [
   {
-    slug: "placeholder-one",
+    slug: "https://ug.link/endeavor/filemgr/share-download/?id=e9fcd40de8f24a93b57cba82b49cd565",
     title: "Battle Bots",
     category: "Promotional Content",
     thumbnail: "/projects/placeholder-1.JPG",
     video: "/projects/placeholder-1.mp4",
   },
   {
-    slug: "placeholder-two",
+    slug: "https://ug.link/endeavor/filemgr/share-download/?id=99fa82b9fc0340b6abbba59db670beb9",
     title: "FRC Georgia State Recap",
     category: "Event",
     thumbnail: "/projects/placeholder-2.JPG",
     video: "/projects/placeholder-2.mp4",
   },
   {
-    slug: "placeholder-three",
+    slug: "https://ug.link/endeavor/filemgr/share-download/?id=06683b38119b48238d4cf956b0c6a41e",
     title: "Commercial Air Systems",
     category: "Promotional Content",
     thumbnail: "/projects/placeholder-3.JPG",
@@ -115,8 +118,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   };
 
   return (
-    <MotionLink
-      href={`/work/${project.slug}`}
+    <motion.a
+      href={project.slug}
+      target="_blank"
+      rel="noopener noreferrer"
       style={styles.card}
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -168,7 +173,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <h3 style={styles.cardTitle}>{project.title}</h3>
         </div>
       </motion.div>
-    </MotionLink>
+    </motion.a>
   );
 }
 
