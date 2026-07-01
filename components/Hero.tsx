@@ -96,7 +96,7 @@ export default function Hero() {
 
         {/* CTA */}
         <motion.div {...fadeUp(0.65)}>
-          <HeroButton href="/booking">Start Your Project</HeroButton>
+          <HeroButton href="/book">Start Your Project</HeroButton>
         </motion.div>
 
       </div>
