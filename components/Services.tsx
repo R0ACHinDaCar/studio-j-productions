@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 const MotionLink = motion.create(Link);
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const MOBILE_BREAKPOINT = 768;
 
 interface Service {
   slug: string;
@@ -45,12 +46,24 @@ const services: Service[] = [
 export default function Services({ preview = false }: { preview?: boolean }) {
   const list = preview ? services.slice(0, 3) : services;
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   return (
     <section data-nav-theme="dark" style={styles.section}>
       {/* Header */}
       <motion.div
-        style={styles.header}
+        style={{
+          ...styles.header,
+          padding: isMobile ? "0 24px" : "0 48px",
+        }}
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -60,52 +73,61 @@ export default function Services({ preview = false }: { preview?: boolean }) {
         <h2 style={styles.heading}>Services</h2>
       </motion.div>
 
-      {/* Filmstrip */}
-      <div style={styles.strip} onMouseLeave={() => setActiveSlug(null)}>
-        {list.map((service) => (
-          <ServicePanel
-            key={service.slug}
-            service={service}
-            isActive={activeSlug === service.slug}
-            anyActive={activeSlug !== null}
-            onHover={() => setActiveSlug(service.slug)}
-          />
-        ))}
-      </div>
+      {/* Desktop: filmstrip */}
+      {!isMobile && (
+        <div style={styles.strip} onMouseLeave={() => setActiveSlug(null)}>
+          {list.map((service) => (
+            <DesktopPanel
+              key={service.slug}
+              service={service}
+              isActive={activeSlug === service.slug}
+              anyActive={activeSlug !== null}
+              onHover={() => setActiveSlug(service.slug)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Mobile: accordion */}
+      {isMobile && (
+        <div style={styles.accordion}>
+          {list.map((service, i) => (
+            <MobileRow
+              key={service.slug}
+              service={service}
+              index={i}
+              isOpen={openSlug === service.slug}
+              onToggle={() =>
+                setOpenSlug(openSlug === service.slug ? null : service.slug)
+              }
+            />
+          ))}
+        </div>
+      )}
 
       {preview && (
-        <MotionViewAllLink href="/services">
-          View All Services →
-        </MotionViewAllLink>
+        <div style={{ textAlign: "center", padding: isMobile ? "40px 24px 0" : "56px 48px 0" }}>
+          <MotionLink
+            href="/services"
+            style={styles.viewAll}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
+          >
+            View All Services →
+          </MotionLink>
+        </div>
       )}
     </section>
   );
 }
 
 // ---------------------------------------------------------------------------
-// MotionViewAllLink — small helper so motion + Link compose cleanly
+// Desktop Panel — unchanged filmstrip behavior
 // ---------------------------------------------------------------------------
 
-function MotionViewAllLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <MotionLink
-      href={href}
-      style={styles.viewAll}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
-    >
-      {children}
-    </MotionLink>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// ServicePanel
-// ---------------------------------------------------------------------------
-
-function ServicePanel({
+function DesktopPanel({
   service,
   isActive,
   anyActive,
@@ -123,8 +145,7 @@ function ServicePanel({
     videoRef.current?.play().catch(() => {});
   };
 
-  // Flex-grow drives the width. Inactive panels shrink to a narrow
-  // "spine" so titles still read vertically, like film canisters on a shelf.
+  
   const flexGrow = isActive ? 6 : anyActive ? 1 : 2;
 
   return (
@@ -134,26 +155,21 @@ function ServicePanel({
       animate={{ flexGrow }}
       transition={{ duration: 0.65, ease: EASE }}
     >
-      {/* Background video — always mounted, only visible/playing when active */}
+   
       <video
         ref={videoRef}
         src={service.video}
         muted
         loop
         playsInline
-        style={{
-          ...styles.video,
-          opacity: isActive ? 1 : 0,
-        }}
+        style={{ ...styles.video, opacity: isActive ? 1 : 0 }}
       />
-
-      {/* Static dark base for inactive state */}
+      
       <div style={styles.panelBase} />
-
-      {/* Gradient so text stays legible over video */}
+      
       <div style={styles.panelGradient} />
 
-      {/* Collapsed state — vertical title, spine-style */}
+      
       <motion.div
         style={styles.collapsedLabel}
         animate={{ opacity: isActive ? 0 : 1 }}
@@ -162,7 +178,7 @@ function ServicePanel({
         <span style={styles.collapsedTitle}>{service.title}</span>
       </motion.div>
 
-      {/* Expanded state — full content */}
+     
       <motion.div
         style={styles.expandedContent}
         animate={{ opacity: isActive ? 1 : 0 }}
@@ -174,6 +190,67 @@ function ServicePanel({
           Learn More →
         </Link>
       </motion.div>
+    </motion.div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Mobile Row — tap-to-expand accordion
+// ---------------------------------------------------------------------------
+
+function MobileRow({
+  service,
+  index,
+  isOpen,
+  onToggle,
+}: {
+  service: Service;
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <motion.div
+      style={styles.mobileRow}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: EASE, delay: index * 0.08 }}
+    >
+      {/* Tap header */}
+      <button onClick={onToggle} style={styles.mobileRowHeader}>
+        <span style={styles.mobileRowTitle}>{service.title}</span>
+        <motion.span
+          style={styles.mobileRowIcon}
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.3, ease: EASE }}
+        >
+          +
+        </motion.span>
+      </button>
+
+      {/* Expandable content */}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.45, ease: EASE }}
+            style={{ overflow: "hidden" }}
+          >
+            <div style={styles.mobileRowContent}>
+              <p style={styles.mobileRowDescription}>{service.description}</p>
+              <Link href={`/services/${service.slug}`} style={styles.mobileLearnMore}>
+                Learn More →
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Divider */}
+      <div style={styles.mobileDivider} />
     </motion.div>
   );
 }
@@ -191,8 +268,8 @@ const styles: Record<string, React.CSSProperties> = {
   header: {
     maxWidth: "1400px",
     margin: "0 auto 64px",
-    padding: "0 48px",
-  },
+  
+},
 
   eyebrow: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
@@ -213,13 +290,14 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
   },
 
-  // The filmstrip itself
+  // ── Desktop filmstrip
   strip: {
     display: "flex",
     width: "100%",
     height: "640px",
-    margin: "0 auto",
+   
     maxWidth: "1600px",
+    margin: "0 auto",
     padding: "0 48px",
     gap: "6px",
   },
@@ -254,7 +332,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%)",
   },
 
-  // Collapsed — vertical text running bottom to top, like a spine label
+  
   collapsedLabel: {
     position: "absolute",
     inset: 0,
@@ -276,7 +354,7 @@ const styles: Record<string, React.CSSProperties> = {
     transform: "rotate(180deg)",
   },
 
-  // Expanded — full readable content, bottom-aligned
+  
   expandedContent: {
     position: "absolute",
     left: "40px",
@@ -318,9 +396,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   viewAll: {
-    display: "block",
-    width: "fit-content",
-    margin: "56px auto 0",
+    display: "inline-block",
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     fontWeight: 500,
@@ -328,5 +404,75 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: "uppercase" as const,
     color: "#F8F6F2",
     textDecoration: "none",
+  },
+
+  // ── Mobile accordion
+  accordion: {
+    padding: "0 24px",
+  },
+
+  mobileRow: {
+    position: "relative",
+  },
+
+  mobileRowHeader: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "24px 0",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    textAlign: "left" as const,
+  },
+
+  mobileRowTitle: {
+    fontFamily: "'Georgia', 'Times New Roman', serif",
+    fontSize: "clamp(22px, 5vw, 30px)",
+    fontWeight: 400,
+    color: "#F8F6F2",
+    letterSpacing: "-0.01em",
+  },
+
+  mobileRowIcon: {
+    fontFamily: "'Inter', sans-serif",
+    fontSize: "24px",
+    fontWeight: 300,
+    color: "rgba(248, 246, 242, 0.6)",
+    lineHeight: 1,
+    flexShrink: 0,
+  },
+
+  mobileRowContent: {
+    paddingBottom: "24px",
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "16px",
+  },
+
+  mobileRowDescription: {
+    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+    fontSize: "15px",
+    fontWeight: 300,
+    lineHeight: 1.7,
+    color: "rgba(248, 246, 242, 0.65)",
+    margin: 0,
+  },
+
+  mobileLearnMore: {
+    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+    fontSize: "12px",
+    fontWeight: 500,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase" as const,
+    color: "#F8F6F2",
+    textDecoration: "none",
+    width: "fit-content",
+  },
+
+  mobileDivider: {
+    height: "1px",
+    backgroundColor: "rgba(248, 246, 242, 0.1)",
   },
 };
