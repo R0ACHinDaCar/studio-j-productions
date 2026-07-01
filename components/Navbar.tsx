@@ -11,33 +11,32 @@ const MotionLink = motion.create(Link);
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+const NAV_LINKS = [
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Start a Project", href: "/book" },
+  { label: "Portal", href: "/portal" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     const checkBackground = () => {
-      const probeY = 30;
-      const probeX = window.innerWidth / 2;
-
-      // The navbar itself sits at this exact point (it's position:
-      // fixed, top:0), so elementFromPoint would just find the nav's
-      // own DOM and never see what's actually behind it. Temporarily
-      // disable pointer-events on the nav so the probe sees through it.
-      const navEl = document.getElementById("site-navbar");
+    
+        const navEl = document.getElementById("site-navbar");
       if (navEl) navEl.style.pointerEvents = "none";
-
-      const stack = document.elementFromPoint(probeX, probeY);
-
+      const el = document.elementFromPoint(window.innerWidth / 2, 30);
       if (navEl) navEl.style.pointerEvents = "";
 
-      let el: Element | null = stack;
+      let node: Element | null = el;
       let theme: string | null = null;
-      while (el && !theme) {
-        theme = el.getAttribute("data-nav-theme");
-        el = el.parentElement;
+      while (node && !theme) {
+        theme = node.getAttribute("data-nav-theme");
+        node = node.parentElement;
       }
-
+      
       setIsDark(theme === "dark");
     };
 
@@ -50,46 +49,44 @@ export default function Navbar() {
     };
   }, [pathname]);
 
-  const showLightBar = isDark;
-
+  
   return (
     <motion.nav
       id="site-navbar"
       style={{
         ...styles.nav,
-        backgroundColor: showLightBar
-          ? "rgba(248, 246, 242, 0.75)"
-          : "transparent",
-        backdropFilter: showLightBar ? "blur(8px)" : "none",
-        WebkitBackdropFilter: showLightBar ? "blur(8px)" : "none",
-        boxShadow: showLightBar ? "0 1px 0 rgba(17,17,17,0.08)" : "none",
+        backgroundColor: isDark
+          ? "transparent"
+          : "rgba(248, 246, 242, 0.82)",
+        backdropFilter: isDark ? "none" : "blur(10px)",
+        WebkitBackdropFilter: isDark ? "none" : "blur(10px)",
+        boxShadow: isDark ? "none" : "0 1px 0 rgba(17,17,17,0.07)",
       }}
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
     >
-      {/* Logo — swaps based on background */}
+      {/* Logo */}
       <Link href="/" style={styles.navLogo}>
         <Image
-          src={isDark ? "/logo-black.png" : "/logo-white.png"}
+          src={isDark ? "/logo-white.png" : "/logo-black.png"}
           alt="Studio J Productions"
-          width={84}
-          height={34}
+          width={88}
+          height={36}
           style={{ objectFit: "contain", display: "block" }}
           priority
         />
       </Link>
 
-      {/* Nav links */}
+      {/* Links */}
       <div style={styles.navLinks}>
-        {[
-          { label: "Services", href: "/services" },
-          { label: "About", href: "/about" },
-          { label: "Work", href: "/work" },
-          { label: "Book", href: "/book" },
-          { label: "Portal", href: "/portal" },
-        ].map((link) => (
-          <NavLink key={link.label} href={link.href} dark={isDark}>
+        {NAV_LINKS.map((link) => (
+          <NavLink
+            key={link.label}
+            href={link.href}
+            dark={isDark}
+            active={pathname === link.href}
+          >
             {link.label}
           </NavLink>
         ))}
@@ -106,20 +103,29 @@ function NavLink({
   href,
   children,
   dark,
+  active,
 }: {
   href: string;
   children: React.ReactNode;
   dark: boolean;
+  active: boolean;
 }) {
+  const baseColor = dark
+    ? "rgba(248, 246, 242, 0.7)"
+    : "rgba(17, 17, 17, 0.55)";
+  const hoverColor = dark ? "#F8F6F2" : "#111111";
+  const activeColor = dark ? "#F8F6F2" : "#111111";
+
   return (
     <MotionLink
       href={href}
       style={{
         ...styles.navLink,
-        color: dark ? "rgba(17, 17, 17, 0.6)" : "rgba(248, 246, 242, 0.55)",
+        color: active ? activeColor : baseColor,
+        fontWeight: active ? 600 : 500,
       }}
-      whileHover={{ color: dark ? "#111111" : "#F8F6F2" }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ color: hoverColor }}
+      transition={{ duration: 0.18 }}
     >
       {children}
     </MotionLink>
@@ -140,27 +146,29 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "10px 48px",
-    transition: "background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease",
+    padding: "12px 48px",
+    transition:
+      "background-color 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease",
   },
 
   navLogo: {
     display: "block",
     textDecoration: "none",
+    flexShrink: 0,
   },
 
   navLinks: {
     display: "flex",
     alignItems: "center",
-    gap: "40px",
+    gap: "36px",
   },
 
   navLink: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
-    fontWeight: 400,
-    letterSpacing: "0.08em",
+    letterSpacing: "0.04em",
     textDecoration: "none",
     cursor: "pointer",
+    whiteSpace: "nowrap" as const,
   },
 };
