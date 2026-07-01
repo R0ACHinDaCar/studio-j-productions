@@ -25,8 +25,8 @@ export default function Footer() {
           <Image
             src="/logo-white.png"
             alt="Studio J Productions"
-            width={120}
-            height={48}
+            width={150}
+            height={60}
             style={{ objectFit: "contain", display: "block" }}
           />
         </Link>
@@ -63,7 +63,7 @@ export default function Footer() {
           © {year} Studio J Productions. All rights reserved.
         </p>
         <p style={styles.location}>
-          Macon, Georgia
+          Atlanta, Georgia
         </p>
       </div>
 
@@ -124,7 +124,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: "32px",
+    gap: "48px",
     flexWrap: "wrap" as const,
     flex: 1,
   },
