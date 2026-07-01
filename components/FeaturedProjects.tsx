@@ -21,22 +21,22 @@ interface Project {
 const projects: Project[] = [
   {
     slug: "placeholder-one",
-    title: "Project Title One",
-    category: "Commercial",
+    title: "Battle Bots",
+    category: "Promotional Content",
     thumbnail: "/projects/placeholder-1.JPG",
     video: "/projects/placeholder-1.mp4",
   },
   {
     slug: "placeholder-two",
-    title: "Project Title Two",
-    category: "Wedding",
+    title: "FRC Georgia State Recap",
+    category: "Event",
     thumbnail: "/projects/placeholder-2.JPG",
     video: "/projects/placeholder-2.mp4",
   },
   {
     slug: "placeholder-three",
-    title: "Project Title Three",
-    category: "Sports",
+    title: "Commercial Air Systems",
+    category: "Promotional Content",
     thumbnail: "/projects/placeholder-3.JPG",
     video: "/projects/placeholder-3.mp4",
   },
