@@ -16,12 +16,39 @@ export default function Footer() {
 
   return (
     <footer data-nav-theme="dark" style={styles.footer}>
+      <style>{`
+        @media (max-width: 768px) {
+          .footer-top {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 32px !important;
+          }
+          .footer-logo {
+            flex-basis: auto !important;
+          }
+          .footer-links {
+            flex-direction: column !important;
+            gap: 20px !important;
+            flex: none !important;
+            align-items: center !important;
+          }
+          .footer-social {
+            flex-basis: auto !important;
+            justify-content: center !important;
+          }
+          .footer-bottom {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 4px !important;
+          }
+        }
+      `}</style>
 
-      {/* Top row — logo, links, social */}
-      <div style={styles.top}>
-
-        {/* Logo */}
-        <Link href="/" style={styles.logoLink}>
+      {/* Top row */}
+      <div className="footer-top" style={styles.top}>
+        <Link href="/" className="footer-logo" style={styles.logoLink}>
           <Image
             src="/logo-white.png"
             alt="Studio J Productions"
@@ -31,8 +58,7 @@ export default function Footer() {
           />
         </Link>
 
-        {/* Nav links — center */}
-        <nav style={styles.links}>
+        <nav className="footer-links" style={styles.links}>
           {NAV_LINKS.map((link) => (
             <Link key={link.label} href={link.href} style={styles.link}>
               {link.label}
@@ -40,8 +66,7 @@ export default function Footer() {
           ))}
         </nav>
 
-        {/* Social — right */}
-        <div style={styles.social}>
+        <div className="footer-social" style={styles.social}>
           <a
             href="https://www.instagram.com/studiojproductions"
             target="_blank"
@@ -57,16 +82,13 @@ export default function Footer() {
       {/* Divider */}
       <div style={styles.divider} />
 
-      {/* Bottom row — copyright */}
-      <div style={styles.bottom}>
+      {/* Bottom row */}
+      <div className="footer-bottom" style={styles.bottom}>
         <p style={styles.copyright}>
           © {year} Studio J Productions. All rights reserved.
         </p>
-        <p style={styles.location}>
-          Atlanta, Georgia
-        </p>
+        <p style={styles.location}>Atlanta, Georgia</p>
       </div>
-
     </footer>
   );
 }
