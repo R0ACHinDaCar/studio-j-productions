@@ -488,7 +488,8 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: "4px",
     opacity: 0.6,
   },
-    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+  error: {
+  fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     color: "#b91c1c",
     margin: "0 0 16px",
