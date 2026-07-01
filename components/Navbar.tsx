@@ -73,12 +73,12 @@ export default function Navbar() {
         id="site-navbar"
         style={{
           ...styles.nav,
-          backgroundColor: isDark
+          backgroundColor: isDark && !menuOpen
             ? "rgba(10,10,10,0.6)"
             : "rgba(248,246,242,0.82)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
-          boxShadow: isDark
+          boxShadow: isDark && !menuOpen
             ? "0 1px 0 rgba(255,255,255,0.06)"
             : "0 1px 0 rgba(17,17,17,0.07)",
           padding: isMobile ? "12px 24px" : "12px 48px",
@@ -90,7 +90,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" style={styles.navLogo}>
           <Image
-            src={isDark ? "/logo-white.png" : "/logo-black.png"}
+            src={isDark && !menuOpen ? "/logo-white.png" : "/logo-black.png"}
             alt="Studio J Productions"
             width={isMobile ? 72 : 88}
             height={isMobile ? 30 : 36}
@@ -238,7 +238,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   mobileMenu: {
     position: "fixed",
-    top: "68px",
+    top: "76px",
     left: 0,
     right: 0,
     zIndex: 99,
