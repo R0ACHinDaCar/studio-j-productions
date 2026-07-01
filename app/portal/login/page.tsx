@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase-client";
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const accountCreated = searchParams.get("accountCreated") === "true";
   const supabase = createClient();
 
   const [email, setEmail] = useState("");
@@ -47,10 +49,22 @@ export default function LoginPage() {
         transition={{ duration: 0.7, ease: EASE }}
       >
         <p style={styles.eyebrow}>Client Portal</p>
-        <h1 style={styles.heading}>Welcome Back</h1>
-        <p style={styles.subheading}>
-          Sign in to view your project, files, and updates.
-        </p>
+
+        {accountCreated ? (
+          <>
+            <h1 style={styles.heading}>You're all set.</h1>
+            <p style={styles.subheading}>
+              Your Studio J Productions account has been created. Sign in below to access your portal.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 style={styles.heading}>Welcome Back</h1>
+            <p style={styles.subheading}>
+              Sign in to view your project, files, and updates.
+            </p>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.field}>
@@ -204,3 +218,13 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: "uppercase" as const,
   },
 };
+
+// Suspense boundary required because useSearchParams() needs it
+// in Next.js App Router to avoid a static rendering error.
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}

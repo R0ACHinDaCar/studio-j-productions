@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase-client";
-
-
-
+ 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function ConfirmPage() {
@@ -59,8 +57,8 @@ export default function ConfirmPage() {
       return;
     }
 
-
-    router.push("/portal");
+    // Redirect to login with a success flag so we can show a welcome message
+    router.push("/portal/login?accountCreated=true");
     router.refresh();
   };
 
@@ -145,13 +143,13 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     padding: "24px",
   },
-
+ 
   card: {
     width: "100%",
     maxWidth: "420px",
     textAlign: "center" as const,
   },
-
+  
   eyebrow: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "12px",
@@ -161,7 +159,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: "rgba(17, 17, 17, 0.45)",
     margin: "0 0 16px",
   },
-
+  
   heading: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
     fontSize: "clamp(32px, 4vw, 44px)",
@@ -169,7 +167,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#111111",
     margin: "0 0 12px",
   },
-
+  
   subheading: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "15px",
@@ -178,27 +176,27 @@ const styles: Record<string, React.CSSProperties> = {
     color: "rgba(17, 17, 17, 0.55)",
     margin: "0 0 40px",
   },
-
+  
   waiting: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "14px",
     color: "rgba(17, 17, 17, 0.45)",
     marginTop: "24px",
   },
-
+  
   form: {
     display: "flex",
     flexDirection: "column" as const,
     gap: "20px",
     textAlign: "left" as const,
   },
-
+  
   field: {
     display: "flex",
     flexDirection: "column" as const,
     gap: "8px",
   },
-
+  
   label: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "12px",
@@ -206,7 +204,7 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: "0.05em",
     color: "rgba(17, 17, 17, 0.6)",
   },
-
+  
   input: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "15px",
@@ -217,14 +215,14 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#111111",
     outline: "none",
   },
-
+  
   error: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     color: "#b91c1c",
     margin: 0,
   },
-
+  
   button: {
     marginTop: "12px",
     padding: "16px",
