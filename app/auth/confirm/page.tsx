@@ -18,18 +18,20 @@ export default function ConfirmPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Supabase puts the token in the URL hash after redirect.
-    // onAuthStateChange fires once the hash is exchanged for a real session.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event) => {
-        if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-          setSessionReady(true);
-        }
+    // Session was already exchanged by AuthRedirect before navigation.
+    // Just verify it exists here.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSessionReady(true);
+      } else {
+        // No session — token may have expired or link was already used
+        setError("This invite link has expired or has already been used. Please contact Studio J Productions for a new one.");
       }
-    );
-    return () => subscription.unsubscribe();
+      setChecking(false);
+    });
   }, [supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,16 +42,16 @@ export default function ConfirmPage() {
       setError("Password must be at least 8 characters.");
       return;
     }
-
+    
     if (password !== confirm) {
       setError("Passwords don't match.");
       return;
     }
 
     setLoading(true);
-
+    
     const { error } = await supabase.auth.updateUser({ password });
-
+    
     setLoading(false);
 
     if (error) {
@@ -57,7 +59,7 @@ export default function ConfirmPage() {
       return;
     }
 
-    // Password set — send them straight to their portal
+
     router.push("/portal");
     router.refresh();
   };
@@ -76,14 +78,14 @@ export default function ConfirmPage() {
           Choose a password to secure your Studio J Productions portal.
         </p>
 
-        {!sessionReady ? (
-          <p style={styles.waiting}>Verifying your invitation link...</p>
+        {checking ? (
+          <p style={styles.waiting}>Verifying your invitation...</p>
+        ) : !sessionReady ? (
+          <p style={styles.error}>{error}</p>
         ) : (
           <form onSubmit={handleSubmit} style={styles.form}>
             <div style={styles.field}>
-              <label style={styles.label} htmlFor="password">
-                New Password
-              </label>
+              <label style={styles.label} htmlFor="password">New Password</label>
               <input
                 id="password"
                 type="password"
@@ -97,9 +99,7 @@ export default function ConfirmPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label} htmlFor="confirm">
-                Confirm Password
-              </label>
+              <label style={styles.label} htmlFor="confirm">Confirm Password</label>
               <input
                 id="confirm"
                 type="password"
@@ -134,9 +134,7 @@ export default function ConfirmPage() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
+
 
 const styles: Record<string, React.CSSProperties> = {
   main: {
