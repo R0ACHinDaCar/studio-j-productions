@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ---------------------------------------------------------------------------
-// app/book/page.tsx
-// Multi-step booking questionnaire for Studio J Productions
-// Steps: Service → Location → Date → Budget → Contact → Done
-// ---------------------------------------------------------------------------
+
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
