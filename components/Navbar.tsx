@@ -238,13 +238,14 @@ const styles: Record<string, React.CSSProperties> = {
 
   mobileMenu: {
     position: "fixed",
-    top: "60px",
+    top: "68px",
     left: 0,
     right: 0,
     zIndex: 99,
     backgroundColor: "rgba(248,246,242,0.97)",
     backdropFilter: "blur(12px)",
     WebkitBackdropFilter: "blur(12px)",
+    borderTop: "1px solid rgba(17,17,17,0.06)",
     borderBottom: "1px solid rgba(17,17,17,0.08)",
     paddingTop: "8px",
     paddingBottom: "16px",
