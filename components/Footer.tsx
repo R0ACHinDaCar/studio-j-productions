@@ -25,8 +25,8 @@ export default function Footer() {
           <Image
             src="/logo-white.png"
             alt="Studio J Productions"
-            width={100}
-            height={40}
+            width={120}
+            height={48}
             style={{ objectFit: "contain", display: "block" }}
           />
         </Link>
@@ -78,8 +78,8 @@ export default function Footer() {
 function InstagramIcon() {
   return (
     <svg
-      width="20"
-      height="20"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -117,13 +117,16 @@ const styles: Record<string, React.CSSProperties> = {
     display: "block",
     textDecoration: "none",
     flexShrink: 0,
+    flexBasis: "160px",
   },
 
   links: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     gap: "32px",
     flexWrap: "wrap" as const,
+    flex: 1,
   },
 
   link: {
@@ -139,8 +142,10 @@ const styles: Record<string, React.CSSProperties> = {
   social: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "flex-end",
     gap: "16px",
     flexShrink: 0,
+    flexBasis: "160px",
   },
 
   socialLink: {
