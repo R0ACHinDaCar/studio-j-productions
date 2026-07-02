@@ -64,8 +64,8 @@ export default function Services({ preview = false }: { preview?: boolean }) {
       >
         <p style={styles.eyebrow}>What We Do</p>
         <h2 style={styles.heading}>
-          Everything you need to tell<br />
-          <em style={{ fontStyle: "italic", color: "rgba(248,246,242,0.7)" }}>your story.</em>
+          The story was always there.<br />
+<em style={{ fontStyle: "italic", color: "rgba(248,246,242,0.7)" }}>We just help people see it.</em>
         </h2>
       </motion.div>
 
@@ -274,7 +274,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     height: "clamp(280px, 35vw, 480px)",
     overflow: "hidden",
-    
+   
     cursor: "pointer",
     backgroundColor: "#0a0a0a",
   },
@@ -388,7 +388,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   viewAll: {
-    
+   
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     fontWeight: 500,

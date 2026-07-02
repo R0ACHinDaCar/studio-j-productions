@@ -50,7 +50,7 @@ export default function AboutPage() {
 
             <div style={styles.storyBody}>
               {[
-                "It started at 17 with a simple but persistent conviction: stories matter, and the way you tell them matters even more. I'd always been drawn to narrative — the way a well-crafted moment can make someone feel understood, inspired, or seen. When I discovered film production, I found the medium I'd been looking for. Not just a camera, but a language.",
+                "It started at 17 with a simple but persistent belief: stories matter, and the way you tell them matters even more. I'd always been drawn to narrative — the way a well-crafted moment can make someone feel understood, inspired, or seen. When I discovered film production, I found the medium I'd been looking for. Not just a camera, but a language.",
                 "What began as curiosity quickly became obsession. Every project taught me something new — about light, about pacing, about what it means to truly listen to a subject before you point a lens at them. The more stories I told, the more I cared about telling them right.",
                 "One moment that's stayed with me: the summer before starting college, I was hired to produce a film for a university department. They needed someone who could tell their story — they had no idea I was about to become one of their own students. A few months later, I walked onto that same campus as a freshman. That project wasn't just a job. It was a reminder that stories have a way of coming full circle.",
                 "Studio J Productions exists because I believe every brand, every athlete, every business, and every moment deserves the same level of craft and intention that I'd want for my own story. When you work with Studio J, you work directly with me — from the first conversation to the final frame.",
@@ -110,9 +110,9 @@ export default function AboutPage() {
       <section style={styles.gearSection}>
         <div style={styles.gearInner}>
           <p style={styles.eyebrow}>The Kit</p>
-          <h2 style={styles.gearHeading}>Professional gear for every situation.</h2>
+          <h2 style={styles.gearHeading}>Built for any production.</h2>
           <p style={styles.gearSubtext}>
-            The right tool matters. Here's what shows up on every production.
+            The right equipment makes all the difference. Here's what's in the kit.
           </p>
 
           <div style={styles.gearGrid}>
