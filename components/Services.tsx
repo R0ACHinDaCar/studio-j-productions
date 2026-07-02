@@ -51,7 +51,6 @@ const services: Service[] = [
 export default function Services({ preview = false }: { preview?: boolean }) {
   const list = preview ? services.slice(0, 3) : services;
 
-  
   return (
     <section data-nav-theme="dark" style={styles.section}>
       {/* Section header */}
@@ -100,8 +99,16 @@ export default function Services({ preview = false }: { preview?: boolean }) {
 
 function ServicePanel({ service, index }: { service: Service; index: number }) {
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Start video when panel comes into view
   useEffect(() => {
@@ -158,7 +165,10 @@ function ServicePanel({ service, index }: { service: Service; index: number }) {
       <div style={styles.panelBorder} />
 
       {/* Content */}
-      <div style={styles.panelContent}>
+      <div style={{
+        ...styles.panelContent,
+        padding: isMobile ? "24px" : "40px 56px",
+      }}>
 
         {/* Index number — top left */}
         <motion.span
@@ -171,48 +181,54 @@ function ServicePanel({ service, index }: { service: Service; index: number }) {
           0{index + 1}
         </motion.span>
 
-        {/* Sub items — always visible, fade slightly on hover */}
-        <motion.div
-          style={styles.subItems}
-          animate={{ opacity: hovered ? 0 : 1 }}
-          transition={{ duration: 0.35 }}
-        >
-          {service.subItems.map((item) => (
-            <span key={item} style={styles.subItem}>{item}</span>
-          ))}
-        </motion.div>
+        {/* Sub items — hidden on mobile to avoid overflow */}
+        {!isMobile && (
+          <motion.div
+            style={styles.subItems}
+            animate={{ opacity: hovered ? 0 : 1 }}
+            transition={{ duration: 0.35 }}
+          >
+            {service.subItems.map((item) => (
+              <span key={item} style={styles.subItem}>{item}</span>
+            ))}
+          </motion.div>
+        )}
 
         {/* Main content — bottom */}
         <div style={styles.mainContent}>
-          {/* Title — always visible */}
+          {/* Title */}
           <motion.h3
             style={{
               ...styles.title,
-              fontSize: hovered ? "clamp(48px, 5vw, 72px)" : "clamp(32px, 3.5vw, 48px)",
-              letterSpacing: hovered ? "-0.02em" : "0.02em",
+              fontSize: isMobile
+                ? "clamp(28px, 7vw, 38px)"
+                : hovered
+                ? "clamp(48px, 5vw, 72px)"
+                : "clamp(32px, 3.5vw, 48px)",
+              letterSpacing: (!isMobile && hovered) ? "-0.02em" : "0.02em",
               transition: "font-size 0.6s cubic-bezier(0.22,1,0.36,1), letter-spacing 0.6s ease",
             }}
           >
             {service.title}
           </motion.h3>
 
-          {/* Description — slides up on hover */}
+          {/* Description — slides up on hover, always visible on mobile */}
           <motion.p
             style={styles.description}
             animate={{
-              opacity: hovered ? 1 : 0,
-              y: hovered ? 0 : 16,
+              opacity: isMobile ? 1 : hovered ? 1 : 0,
+              y: isMobile ? 0 : hovered ? 0 : 16,
             }}
             transition={{ duration: 0.5, ease: EASE, delay: hovered ? 0.1 : 0 }}
           >
             {service.description}
           </motion.p>
 
-          {/* Learn More — slides up on hover */}
+          {/* Learn More — always visible on mobile */}
           <motion.div
             animate={{
-              opacity: hovered ? 1 : 0,
-              y: hovered ? 0 : 12,
+              opacity: isMobile ? 1 : hovered ? 1 : 0,
+              y: isMobile ? 0 : hovered ? 0 : 12,
             }}
             transition={{ duration: 0.5, ease: EASE, delay: hovered ? 0.18 : 0 }}
           >
@@ -272,9 +288,8 @@ const styles: Record<string, React.CSSProperties> = {
   panel: {
     position: "relative",
     width: "100%",
-    height: "clamp(280px, 35vw, 480px)",
+    height: "clamp(320px, 45vw, 480px)",
     overflow: "hidden",
-   
     cursor: "pointer",
     backgroundColor: "#0a0a0a",
   },
@@ -352,7 +367,6 @@ const styles: Record<string, React.CSSProperties> = {
 
   title: {
     fontFamily: "'Georgia', 'Times New Roman', serif",
-    
     fontWeight: 400,
     color: "#F8F6F2",
     margin: 0,
@@ -388,7 +402,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   viewAll: {
-   
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     fontWeight: 500,
@@ -397,6 +410,4 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#F8F6F2",
     textDecoration: "none",
   },
-
-
 };

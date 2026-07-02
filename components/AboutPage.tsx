@@ -14,9 +14,38 @@ const GEAR = [
 export default function AboutPage() {
   return (
     <main data-nav-theme="light" style={styles.main}>
+      <style>{`
+        @media (max-width: 768px) {
+          .about-story-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+          .about-photo-wrapper {
+            position: static !important;
+          }
+          .about-photo {
+            aspect-ratio: 4 / 3 !important;
+          }
+          .about-hero-section {
+            padding: 160px 24px 80px !important;
+          }
+          .about-story-section {
+            padding: 72px 24px !important;
+          }
+          .about-philosophy-section {
+            padding: 72px 24px !important;
+          }
+          .about-gear-section {
+            padding: 72px 24px !important;
+          }
+          .about-cta-section {
+            padding: 72px 24px !important;
+          }
+        }
+      `}</style>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section style={styles.heroSection}>
+      <section className="about-hero-section" style={styles.heroSection}>
         <div style={styles.heroInner}>
           <p style={styles.eyebrow}>About</p>
           <h1 style={styles.heroHeading}>
@@ -27,11 +56,11 @@ export default function AboutPage() {
       </section>
 
       {/* ── Story + Photo ─────────────────────────────────────── */}
-      <section style={styles.storySection}>
-        <div style={styles.storyGrid}>
+      <section className="about-story-section" style={styles.storySection}>
+        <div className="about-story-grid" style={styles.storyGrid}>
 
           {/* Photo */}
-          <div style={styles.photoWrapper}>
+          <div className="about-photo-wrapper" style={styles.photoWrapper}>
             <img
               src="/about/jake.jpg"
               alt="Jake — Studio J Productions"
@@ -72,7 +101,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Philosophy ───────────────────────────────────────── */}
-      <section style={styles.philosophySection}>
+      <section className="about-philosophy-section" style={styles.philosophySection}>
         <div style={styles.philosophyInner}>
           <p style={styles.eyebrowDark}>How We Work</p>
           <h2 style={styles.philosophyHeading}>
@@ -107,7 +136,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Gear ─────────────────────────────────────────────── */}
-      <section style={styles.gearSection}>
+      <section className="about-gear-section" style={styles.gearSection}>
         <div style={styles.gearInner}>
           <p style={styles.eyebrow}>The Kit</p>
           <h2 style={styles.gearHeading}>Built for any production.</h2>
@@ -129,7 +158,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <section style={styles.ctaSection}>
+      <section className="about-cta-section" style={styles.ctaSection}>
         <div style={styles.ctaInner}>
           <p style={styles.eyebrowDark}>Ready?</p>
           <h2 style={styles.ctaHeading}>
