@@ -47,13 +47,13 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
   code: {
-    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-    fontSize: "11px",
-    fontWeight: 500,
-    letterSpacing: "0.3em",
-    textTransform: "uppercase" as const,
-    color: "rgba(248,246,242,0.3)",
-    margin: "0 0 24px",
+    fontFamily: "'Georgia', 'Times New Roman', serif",
+    fontSize: "clamp(80px, 12vw, 140px)",
+    fontWeight: 400,
+    letterSpacing: "-0.03em",
+    color: "rgba(248,246,242,0.08)",
+    margin: "0 0 8px",
+    lineHeight: 1,
   },
 
   heading: {
