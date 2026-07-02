@@ -22,6 +22,7 @@ interface FormData {
   service: string;
   location: string;
   date: string;
+  format: string;
   upgrades: string[];
   name: string;
   email: string;
@@ -33,6 +34,7 @@ const EMPTY: FormData = {
   service: "",
   location: "",
   date: "",
+  format: "",
   upgrades: [],
   name: "",
   email: "",
@@ -122,7 +124,38 @@ export default function BookPage() {
       <StepNav onBack={back} onNext={next} nextDisabled={!form.date.trim()} />
     </StepShell>,
 
-    // Step 3 — Upgrades
+    // Step 3 — Format
+    <StepShell key="format" title="What format?" subtitle="How do you plan to use this video?">
+      <div style={styles.optionGrid}>
+        {[
+          { label: "Horizontal", sub: "16:9 — YouTube, websites, TV" },
+          { label: "Vertical", sub: "9:16 — Instagram Reels, TikTok" },
+          { label: "Not sure yet", sub: "We'll figure it out together" },
+        ].map((f) => (
+          <motion.button
+            key={f.label}
+            onClick={() => { set("format", f.label); setTimeout(next, 300); }}
+            style={{
+              ...styles.optionCard,
+              backgroundColor: form.format === f.label ? "#111111" : "#ffffff",
+              color: form.format === f.label ? "#F8F6F2" : "#111111",
+              borderColor: form.format === f.label ? "#111111" : "rgba(17,17,17,0.15)",
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.18 }}
+          >
+            <span style={{ display: "block", fontWeight: 500 }}>{f.label}</span>
+            <span style={{ display: "block", fontSize: "12px", opacity: 0.55, marginTop: "4px" }}>{f.sub}</span>
+          </motion.button>
+        ))}
+      </div>
+      <div style={{ marginTop: "24px" }}>
+        <StepNav onBack={back} onNext={next} nextDisabled={!form.format} />
+      </div>
+    </StepShell>,
+
+    // Step 4 — Upgrades
     <StepShell key="upgrades" title="Any add-ons?" subtitle="Select everything that applies — you can choose multiple.">
       <div style={styles.optionGrid}>
         {UPGRADES.map((u) => {
@@ -488,8 +521,9 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: "4px",
     opacity: 0.6,
   },
+
   error: {
-  fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+    fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     fontSize: "13px",
     color: "#b91c1c",
     margin: "0 0 16px",

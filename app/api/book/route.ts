@@ -14,7 +14,7 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, phone, service, location, date, upgrades, details } = body;
+    const { name, email, phone, service, location, date, format, upgrades, details } = body;
 
     // Validate required fields
     if (!name || !email || !service || !location) {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     // Save to Supabase
     const { error: dbError } = await supabase.from("leads").insert([{
       name, email, phone, service, location, date,
-      budget: Array.isArray(upgrades) ? upgrades.join(", ") : upgrades,
+      budget: [format ? `Format: ${format}` : "", Array.isArray(upgrades) ? upgrades.join(", ") : upgrades].filter(Boolean).join(" | "),
       details,
     }]);
 
@@ -61,6 +61,7 @@ export async function POST(req: Request) {
                       <table width="100%" cellpadding="0" cellspacing="0" border="0">
                         ${[
                           ["Service", service],
+                          ["Format", format || "Not specified"],
                           ["Location", location],
                           ["Date", date || "Not specified"],
                           ["Add-ons", Array.isArray(upgrades) && upgrades.length > 0 ? upgrades.join(", ") : "None selected"],
